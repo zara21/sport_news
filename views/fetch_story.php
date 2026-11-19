@@ -21,7 +21,7 @@ $logoStmt->execute([$club]);
 $response['club_logo'] = cached_remote_image_url($logoStmt->fetchColumn() ?: SPORT_BLOG_DEFAULT_IMAGE);
 
 $stmt = $pdo->prepare('
-    SELECT a.id, a.title, a.created_at, a.story_image, a.image, a.slug
+    SELECT a.id, a.title, a.created_at, a.story_image, a.image, a.slug, a.category
     FROM articles a
     INNER JOIN article_tags at ON a.id = at.article_id
     INNER JOIN tags t ON at.tag_id = t.id
@@ -43,6 +43,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
     $imageUrl = article_story_image_url($row);
     $response['stories'][] = [
         'title' => $row['title'],
+        'category' => (string) ($row['category'] ?? ''),
         'date' => $row['created_at'],
         'image_url' => $imageUrl,
         'image_fit' => $imageUrl === $response['club_logo'] ? 'contain' : 'cover',

@@ -60,9 +60,9 @@ function quiz_list_url(int $page, string $search, string $type): string
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ყველა ქვიზი | Sport Blog</title>
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119c">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119c">
-    <link rel="stylesheet" href="/sport_blog/css/category.css?v=20261119c">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119d">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119d">
+    <link rel="stylesheet" href="/sport_blog/css/category.css?v=20261119d">
 </head>
 <body class="sport-body">
 <?php require_once __DIR__ . '/../includes/header.php'; ?>
