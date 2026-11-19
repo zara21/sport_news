@@ -66,6 +66,9 @@ try:
     """
 
     for _, row in df.iterrows():
+        # FRO ("Final result only") მატჩებს არ ვიღებთ
+        if re.search(r"\bFRO\b", f"{row['match_time']} {row['match_status']}", re.IGNORECASE):
+            continue
         # გოლების ვალიდაცია (შენი PHP-ს is_numeric-ის ანალოგი)
         h_goals = is_valid_score(row['home_goals'])
         a_goals = is_valid_score(row['away_goals'])

@@ -17,6 +17,10 @@ function sports_read_matches(string $csvFile): array
     $usedSlugs = [];
     while (($row = fgetcsv($handle, 0, "\t")) !== false) {
         if (count($row) < 12 || trim((string) $row[0]) === '') continue;
+        // FRO ("Final result only") მატჩებს არ ვიღებთ
+        if (preg_match('/\bFRO\b/i', (string) $row[1] . ' ' . (string) $row[8])) continue;
+        // დრო მხოლოდ HH:MM ფორმატში ("12:00\nFRO" და მსგავსი ნარჩენების გარეშე)
+        $row[1] = preg_match('/\b(\d{1,2}:\d{2})\b/', (string) $row[1], $timeMatch) ? $timeMatch[1] : '';
         $baseSlug = sports_slug((string) $row[10], sports_slug($row[2] . '-' . $row[4]));
         $slug = $baseSlug;
         for ($suffix = 2; isset($usedSlugs[$slug]); $suffix++) $slug = $baseSlug . '-' . $suffix;

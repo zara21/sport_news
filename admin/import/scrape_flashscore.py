@@ -42,6 +42,27 @@ def init_driver():
     driver.set_page_load_timeout(150)
     return driver
 
+EXPECTED_TEAMS = {"premier_league": 20, "la_liga": 20, "serie_a": 20, "bundesliga": 18, "ligue_1": 18}
+
+
+def validate_table(data):
+    """ამოწმებს, რომ ცხრილი სრული და შინაგანად თანმიმდევრულია, სანამ ძველ CSV-ს გადავაწერთ."""
+    problems = []
+    if not data:
+        return ["ცხრილი ცარიელია"]
+    league = data[0]["league_name"]
+    if len(data) != EXPECTED_TEAMS.get(league, len(data)):
+        problems.append(f"გუნდების რაოდენობა {len(data)}, მოსალოდნელია {EXPECTED_TEAMS[league]}")
+    if [row["position"] for row in data] != list(range(1, len(data) + 1)):
+        problems.append("პოზიციები არ არის 1..N")
+    for row in data:
+        if row["wins"] + row["draws"] + row["losses"] != row["played"]:
+            problems.append(f"{row['team']}: W+D+L != P")
+        if 3 * row["wins"] + row["draws"] != row["points"]:
+            problems.append(f"{row['team']}: ქულები არ ემთხვევა")
+    return problems
+
+
 def scrape_league(driver, league_key, url):
     print(f"⏳ მუშავდება: {league_key}...")
     try:
@@ -80,24 +101,39 @@ def scrape_league(driver, league_key, url):
             except Exception as e:
                 continue
 
-        if data:
-            df = pd.DataFrame(data)
-            filename = os.path.join(SAVE_PATH, f"{league_key}_table.csv")
-            df.to_csv(filename, index=False)
-            print(f"✅ {league_key} შენახულია ({len(data)} გუნდი).")
-        
+        problems = validate_table(data)
+        if problems:
+            print(f"❌ {league_key}: მონაცემები არ შეინახა — {'; '.join(problems[:3])}")
+            return False
+
+        df = pd.DataFrame(data)
+        filename = os.path.join(SAVE_PATH, f"{league_key}_table.csv")
+        # ჯერ დროებით ფაილში, მერე ატომურად ჩანაცვლება
+        df.to_csv(filename + ".tmp", index=False)
+        os.replace(filename + ".tmp", filename)
+        print(f"✅ {league_key} შენახულია ({len(data)} გუნდი).")
+        return True
+
     except Exception as e:
         print(f"❌ შეცდომა {league_key}-ზე: {e}")
+        return False
 
 if __name__ == "__main__":
     if os.name != "nt":
         os.system("pkill -9 google-chrome 2>/dev/null")
     
     driver = init_driver()
+    failed = []
     try:
         for key, url in LEAGUES.items():
-            scrape_league(driver, key, url)
+            if not scrape_league(driver, key, url):
+                failed.append(key)
             time.sleep(5)
     finally:
         driver.quit()
         print("🏁 პროცესი დასრულდა.")
+
+    if failed:
+        print(f"⚠️ ვერ განახლდა: {', '.join(failed)} (ამ ლიგებისთვის ძველი CSV დარჩა)")
+    # ყველა ლიგა ჩავარდა => error კოდი, რომ სინქრონიზაციამ ეს შეცდომად აღრიცხოს
+    sys.exit(1 if len(failed) == len(LEAGUES) else 0)
