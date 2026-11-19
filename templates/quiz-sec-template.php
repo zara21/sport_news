@@ -26,6 +26,7 @@ if (empty($slug)) {
 
     if (!$quiz) {
         $errorMessage = 'ქვიზი ვერ მოიძებნა.';
+        http_response_code(404);
     } else {
         $pageTitle = $quiz['title'] ?: $pageTitle;
         $statLabel = $statLabels[$quiz['stat_type']] ?? $statLabel;

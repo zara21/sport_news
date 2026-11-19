@@ -36,6 +36,7 @@ if ($slug !== '' && $slug !== 'index') {
     $stmt = $pdo->prepare('SELECT * FROM matches WHERE slug = :slug LIMIT 1');
     $stmt->execute([':slug' => $slug]);
     $match = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$match) http_response_code(404);
 
     if ($match) {
         $iframeStmt = $pdo->prepare('SELECT iframe_live FROM match_iframes WHERE slug = :slug LIMIT 1');

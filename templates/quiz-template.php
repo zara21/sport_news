@@ -21,6 +21,7 @@ if (empty($slug)) {
 
     if (!$quiz) {
         $errorMessage = 'ქვიზი ვერ მოიძებნა.';
+        http_response_code(404);
     } else {
         $quizId = (int) $quiz['id'];
         $pageTitle = $quiz['title'] ?: $pageTitle;

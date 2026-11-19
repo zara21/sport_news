@@ -45,6 +45,21 @@ function collect_used_media(PDO $pdo): array
         }
     }
 
+    foreach ($pdo->query('SELECT id, title, image FROM quiz_games') as $row) {
+        $name = normalize_media_name($row['image'] ?? '');
+        if ($name !== '') {
+            $used['uploads/' . $name][] = 'სტატისტიკური ქვიზი #' . $row['id'] . ': ' . $row['title'];
+        }
+    }
+
+    foreach ($pdo->query('SELECT q.id, q.quiz_id, q.quiz_image FROM questions q WHERE q.quiz_image IS NOT NULL AND q.quiz_image <> ""') as $row) {
+        $name = normalize_media_name($row['quiz_image'] ?? '');
+        if ($name !== '') {
+            $used['uploads/quizzes/' . $name][] = 'ქვიზის კითხვა #' . $row['id'] . ' (ქვიზი #' . $row['quiz_id'] . ')';
+            $used['uploads/' . $name][] = 'ქვიზის კითხვა #' . $row['id'] . ' (ქვიზი #' . $row['quiz_id'] . ')';
+        }
+    }
+
     foreach ($pdo->query('SELECT id, event_title, event_image FROM sports_events') as $row) {
         $name = normalize_media_name($row['event_image'] ?? '');
         if ($name !== '') {
@@ -58,12 +73,22 @@ function collect_used_media(PDO $pdo): array
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf_token($_POST['csrf_token'] ?? null);
 
-    $relative = trim((string)($_POST['file'] ?? ''));
     $used = collect_used_media($pdo);
-    $absolute = realpath(__DIR__ . '/../' . $relative);
-    $base = realpath(__DIR__ . '/../uploads');
+    $absolute = realpath(__DIR__ . '/../' . trim((string)($_POST['file'] ?? '')));
 
-    if ($absolute && $base && strpos($absolute, $base) === 0 && is_file($absolute) && empty($used[$relative])) {
+    // ფაილი მხოლოდ სიაში მოცემული საქაღალდეებიდან (არა defaults/, არა .htaccess და სხვა dot-ფაილები);
+    // "გამოიყენება" მოწმდება ნორმალიზებული მისამართით და ბაზის ყველა მედია-სვეტით
+    $relative = null;
+    if ($absolute && is_file($absolute) && !str_starts_with(basename($absolute), '.')) {
+        foreach ($mediaDirs as $relativeDir => $absoluteDir) {
+            if (realpath($absoluteDir) === dirname($absolute)) {
+                $relative = $relativeDir . '/' . basename($absolute);
+                break;
+            }
+        }
+    }
+
+    if ($relative !== null && empty($used[$relative]) && !media_is_referenced($pdo, basename($absolute))) {
         unlink($absolute);
         $_SESSION['success_message'] = 'ფაილი წაიშალა.';
     } else {

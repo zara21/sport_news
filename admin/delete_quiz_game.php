@@ -18,8 +18,25 @@ if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
 }
 
 $id = (int)$_POST['id'];
-$pdo->prepare('DELETE FROM quiz_game_questions WHERE quiz_game_id = ?')->execute([$id]);
-$pdo->prepare('DELETE FROM quiz_games WHERE id = ?')->execute([$id]);
+$image = $pdo->prepare('SELECT image FROM quiz_games WHERE id = ?');
+$image->execute([$id]);
+$imageName = basename((string) $image->fetchColumn());
+
+$pdo->beginTransaction();
+try {
+    $pdo->prepare('DELETE FROM quiz_game_questions WHERE quiz_game_id = ?')->execute([$id]);
+    $pdo->prepare('DELETE FROM quiz_games WHERE id = ?')->execute([$id]);
+    $pdo->commit();
+} catch (Throwable $e) {
+    $pdo->rollBack();
+    error_log('delete_quiz_game: ' . $e->getMessage());
+    http_response_code(500);
+    exit('ქვიზი ვერ წაიშალა.');
+}
+
+if ($imageName !== '') {
+    delete_local_media($imageName, __DIR__ . '/../uploads');
+}
 
 header('Location: quiz_games.php?deleted=1');
 exit;
