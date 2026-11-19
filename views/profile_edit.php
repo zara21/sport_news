@@ -10,7 +10,7 @@ if (empty($_SESSION['user_id'])) {
 }
 
 $userId = (int) $_SESSION['user_id'];
-$stmt = $pdo->prepare('SELECT id, first_name, last_name, email, birthdate, gender, phone, password, profile_image FROM users WHERE id = ? LIMIT 1');
+$stmt = $pdo->prepare('SELECT id, first_name, last_name, email, birthdate, gender, phone, password, profile_image, status FROM users WHERE id = ? LIMIT 1');
 $stmt->execute([$userId]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$user) {
@@ -22,6 +22,13 @@ if (!$user) {
 
 $successMessage = '';
 $errorMessage = '';
+
+// ანგარიშის თვითწაშლა: მხოლოდ ჩვეულებრივ მომხმარებელს, რომელსაც სტატიები არ აქვს
+// (articles.user_id ON DELETE CASCADE — ავტორის წაშლა მის სტატიებსაც წაშლიდა)
+$authoredArticles = $pdo->prepare('SELECT COUNT(*) FROM articles WHERE user_id = ?');
+$authoredArticles->execute([$userId]);
+$isStaff = admin_role_capabilities((string) ($user['status'] ?? '')) !== [];
+$canDeleteAccount = !$isStaff && (int) $authoredArticles->fetchColumn() === 0;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verify_form_csrf_token($_POST['csrf_token'] ?? null)) {
@@ -76,6 +83,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 $pdo->prepare('UPDATE users SET password = ? WHERE id = ?')->execute([password_hash($newPassword, PASSWORD_DEFAULT), $userId]);
                 $successMessage = 'პაროლი წარმატებით შეიცვალა.';
+            } elseif ($action === 'delete_account') {
+                if (!$canDeleteAccount) {
+                    throw new RuntimeException('ამ ანგარიშის წაშლა პროფილიდან შეუძლებელია (ადმინი ან სტატიების ავტორი). დაგვიკავშირდით.');
+                }
+                if (!empty($user['password'])) {
+                    if (!password_verify((string) ($_POST['delete_password'] ?? ''), $user['password'])) {
+                        throw new RuntimeException('პაროლი არასწორია — ანგარიში არ წაიშალა.');
+                    }
+                } elseif (strcasecmp(trim((string) ($_POST['delete_email'] ?? '')), (string) $user['email']) !== 0) {
+                    throw new RuntimeException('ელფოსტა არ ემთხვევა — ანგარიში არ წაიშალა.');
+                }
+
+                // დაკავშირებული მონაცემები (ბიბლიოთეკა, ისტორია, ქვიზები, კომენტარები) იშლება CASCADE-ით
+                $pdo->prepare('DELETE FROM users WHERE id = ?')->execute([$userId]);
+                $avatar = (string) ($user['profile_image'] ?? '');
+                if (str_starts_with($avatar, '/sport_blog/uploads/profile_images/')) {
+                    delete_local_media(basename($avatar), __DIR__ . '/../uploads/profile_images');
+                }
+
+                $_SESSION = [];
+                if (ini_get('session.use_cookies')) {
+                    $cookie = session_get_cookie_params();
+                    unset($cookie['lifetime']);
+                    setcookie(session_name(), '', ['expires' => time() - 3600] + $cookie);
+                }
+                session_destroy();
+                site_redirect('/?account_deleted=1', 303);
             }
         } catch (Throwable $e) {
             $errorMessage = $e->getMessage();
@@ -93,10 +127,11 @@ function profile_edit_h(?string $value): string
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php require __DIR__ . '/../includes/head_meta.php'; ?>
     <title>პროფილის რედაქტირება | Sport Blog</title>
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119f">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119f">
-    <link rel="stylesheet" href="/sport_blog/css/profile.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119g">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119g">
+    <link rel="stylesheet" href="/sport_blog/css/profile.css?v=20261119g">
 </head>
 <body class="profile-page">
 <?php require __DIR__ . '/../includes/header.php'; ?>
@@ -139,6 +174,25 @@ function profile_edit_h(?string $value): string
                 <button type="submit" class="user-profile__button user-profile__button--primary">პაროლის განახლება</button>
             </form>
         </div>
+
+        <section class="profile-settings__panel profile-settings__danger">
+            <h2>ანგარიშის წაშლა</h2>
+            <?php if ($canDeleteAccount): ?>
+                <p>წაიშლება პროფილი, ბიბლიოთეკა, კითხვის ისტორია, ქვიზების შედეგები და კომენტარები. ამის დაბრუნება შეუძლებელია.</p>
+                <form method="post" onsubmit="return confirm('ანგარიში სამუდამოდ წაიშლება. გავაგრძელოთ?')">
+                    <input type="hidden" name="csrf_token" value="<?= profile_edit_h(form_csrf_token()) ?>">
+                    <input type="hidden" name="action" value="delete_account">
+                    <?php if (!empty($user['password'])): ?>
+                        <label>დასადასტურებლად შეიყვანეთ პაროლი<input type="password" name="delete_password" required autocomplete="current-password"></label>
+                    <?php else: ?>
+                        <label>დასადასტურებლად ჩაწერეთ ელფოსტა (<?= profile_edit_h($user['email']) ?>)<input type="email" name="delete_email" required></label>
+                    <?php endif; ?>
+                    <button type="submit" class="user-profile__button user-profile__button--danger">ანგარიშის წაშლა</button>
+                </form>
+            <?php else: ?>
+                <p>ადმინისტრატორის ან სტატიების ავტორის ანგარიშის წაშლა პროფილიდან შეუძლებელია. დაგვიკავშირდით <a href="/sport_blog/views/contact">კონტაქტის გვერდიდან</a>.</p>
+            <?php endif; ?>
+        </section>
     </section>
 </main>
 <?php require __DIR__ . '/../includes/footer.php'; ?>

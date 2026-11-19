@@ -495,3 +495,27 @@
 .profile-settings__alert {
     border-radius: var(--sb-radius);
 }
+
+.profile-settings__danger {
+    margin-top: 20px;
+    border-color: var(--sb-red-border);
+}
+
+.profile-settings__danger h2 {
+    color: var(--sb-red-text);
+}
+
+.profile-settings__danger p {
+    margin: 0 0 12px;
+    color: var(--sb-text-soft);
+}
+
+.profile-settings__danger p a {
+    color: var(--sb-accent-text);
+}
+
+.profile-settings__danger form {
+    display: grid;
+    gap: 12px;
+    max-width: 420px;
+}

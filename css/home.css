@@ -1219,3 +1219,14 @@
 
     .home-feature__overlay strong { font-size: 22px; }
 }
+
+.home-notice {
+    width: min(1400px, calc(100% - 40px));
+    margin: 18px auto 0;
+    padding: 12px 16px;
+    border: 1px solid var(--sb-accent-border);
+    border-radius: var(--sb-radius);
+    background: var(--sb-accent-soft);
+    color: var(--sb-accent-text);
+    font-weight: 700;
+}
