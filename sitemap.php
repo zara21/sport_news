@@ -8,6 +8,9 @@ $urls = [
     ['loc' => absolute_site_url('/sport_blog/'), 'changefreq' => 'hourly', 'priority' => '1.0'],
     ['loc' => absolute_site_url('/sport_blog/views/articles.php'), 'changefreq' => 'daily', 'priority' => '0.8'],
     ['loc' => absolute_site_url('/sport_blog/views/all_quizzes'), 'changefreq' => 'weekly', 'priority' => '0.7'],
+    ['loc' => absolute_site_url('/sport_blog/views/contact'), 'changefreq' => 'yearly', 'priority' => '0.3'],
+    ['loc' => absolute_site_url('/sport_blog/views/privacy'), 'changefreq' => 'yearly', 'priority' => '0.2'],
+    ['loc' => absolute_site_url('/sport_blog/views/terms'), 'changefreq' => 'yearly', 'priority' => '0.2'],
 ];
 
 foreach (['football', 'basketball', 'tennis', 'formula1', 'mma', 'rugby', 'other'] as $category) {

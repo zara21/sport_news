@@ -62,9 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>რეგისტრაცია | Sport Blog</title>
 
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/auth.css?v=20261119e">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/auth.css?v=20261119f">
 </head>
 <body class="sport-body">
 <?php require_once __DIR__ . '/../includes/header.php'; ?>
@@ -124,7 +124,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="tel" id="phone" name="phone" class="registration-form__input" value="<?= htmlspecialchars($phone) ?>">
             </div>
 
+            <p class="auth-page__hint">რეგისტრაციით ეთანხმებით <a href="/sport_blog/views/terms">წესებს</a> და <a href="/sport_blog/views/privacy">კონფიდენციალურობის პოლიტიკას</a>.</p>
+
             <button type="submit" class="registration-form__submit-btn">რეგისტრაცია</button>
+
+            <?php render_google_login_button('Google-ით რეგისტრაცია'); ?>
 
             <p class="registration-form__login-link">
                 უკვე გაქვთ ანგარიში? <a href="/sport_blog/auth_system/login">შესვლა</a>

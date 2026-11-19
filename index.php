@@ -5,6 +5,7 @@ require_once __DIR__ . '/includes/db_connect.php';
 <!DOCTYPE html>
 <html lang="ka">
 <head>
+    <link rel="alternate" type="application/rss+xml" title="Sport Blog" href="/sport_blog/feed.xml">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Sport Blog - სპორტული სიახლეები, მატჩები, ცხრილები, ვიდეოები და ქვიზები.">
@@ -12,10 +13,10 @@ require_once __DIR__ . '/includes/db_connect.php';
 
     <link rel="stylesheet" href="/sport_blog/assets/vendor/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/stories.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/home.css?v=20261119e">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/stories.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/home.css?v=20261119f">
     <script src="/sport_blog/js/home.js?v=20260624-1" defer></script>
 </head>
 <body class="sport-body">

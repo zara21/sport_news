@@ -57,9 +57,9 @@ $isFinished = in_array($status, ['finished', 'after pen.'], true);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= matchEsc($pageTitle) ?> - Sport Blog</title>
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/match.css?v=20261119e">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/match.css?v=20261119f">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
 </head>
 <body>

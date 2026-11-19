@@ -28,3 +28,6 @@ Thumbs.db
 .idea/
 .vscode/
 .agents/
+config/database.php
+config/mail.php
+config/site.php

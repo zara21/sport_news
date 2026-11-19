@@ -49,6 +49,12 @@
 
   <div class="site-footer__copyright">
     <span>&copy; <?= date('Y') ?> SportBlog. ყველა უფლება დაცულია.</span>
+    <nav class="site-footer__legal" aria-label="ინფორმაცია">
+      <a href="/sport_blog/views/privacy">კონფიდენციალურობა</a>
+      <a href="/sport_blog/views/terms">წესები</a>
+      <a href="/sport_blog/views/contact">კონტაქტი</a>
+      <a href="/sport_blog/feed.xml"><i class="fas fa-rss" aria-hidden="true"></i> RSS</a>
+    </nav>
     <a href="#" class="site-footer__top" onclick="window.scrollTo({top:0});return false;">ზემოთ <i class="fas fa-arrow-up"></i></a>
   </div>
 </footer>

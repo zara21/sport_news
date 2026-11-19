@@ -26,12 +26,17 @@ function form_csrf_token(): string
     return $_SESSION['form_csrf_token'];
 }
 
-function verify_form_csrf_token(?string $token): bool
+function verify_form_csrf_token(mixed $token): bool
 {
     auth_start_session();
-    return !empty($token)
+    return is_string($token) && $token !== ''
         && !empty($_SESSION['form_csrf_token'])
         && hash_equals($_SESSION['form_csrf_token'], $token);
+}
+
+function render_logout_token(): void
+{
+    echo '<input type="hidden" name="csrf_token" value="' . form_csrf_token() . '">';
 }
 
 function auth_rate_limit_key(string $email = ''): string
@@ -78,4 +83,24 @@ function auth_clear_failures(string $key): void
     if (is_file($file)) {
         unlink($file);
     }
+}
+
+/** Google-ით შესვლა ჩართულია, თუ config/google_oauth.php-ში ან გარემოს ცვლადებში client ID და secret არის. */
+function google_login_enabled(): bool
+{
+    $file = __DIR__ . '/../config/google_oauth.php';
+    $config = is_file($file) ? (array) require $file : [];
+    $clientId = getenv('GOOGLE_CLIENT_ID') ?: ($config['client_id'] ?? '');
+    $secret = getenv('GOOGLE_CLIENT_SECRET') ?: ($config['client_secret'] ?? '');
+    return $clientId !== '' && $secret !== '';
+}
+
+function render_google_login_button(string $label = 'Google-ით შესვლა'): void
+{
+    if (!google_login_enabled()) {
+        return;
+    }
+    echo '<div class="auth-divider"><span>ან</span></div>'
+        . '<a class="auth-google-button" href="/sport_blog/auth_system/google_login.php">'
+        . '<i class="fab fa-google" aria-hidden="true"></i> ' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</a>';
 }

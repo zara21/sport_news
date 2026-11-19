@@ -12,42 +12,51 @@ require_once __DIR__ . '/../includes/embed_helpers.php';
 
 function currentArticleSlug(): string
 {
-    if (!empty($GLOBALS['slug'])) {
-        return trim((string) $GLOBALS['slug']);
+    $path = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '', '/');
+    if (!str_starts_with($path, site_path('/news/'))) {
+        return '';
     }
-
-    if (!empty($_GET['slug'])) {
-        return trim((string) $_GET['slug']);
+    $last = rawurldecode(basename($path));
+    if (strcasecmp($last, 'index.php') === 0 && is_string($_GET['slug'] ?? null)) {
+        return trim($_GET['slug']);
     }
-
-    $path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '';
-    $path = trim($path, '/');
-    $parts = explode('/', $path);
-    $last = urldecode((string) end($parts));
-
     return preg_replace('/\.php$/i', '', $last);
 }
 
 $slug = currentArticleSlug();
+$legacySlugIds = ['-1745996214' => 45];
+$legacyArticleId ??= $legacySlugIds[$slug] ?? null;
 $article = null;
 $similarArticles = [];
 $relatedArticles = [];
 $tags = [];
 $tagRows = [];
 
-if ($slug !== '' && $slug !== 'index') {
+if (isset($legacyArticleId) || ($slug !== '' && $slug !== 'index')) {
+    $lookup = isset($legacyArticleId) ? 'a.id' : 'a.slug';
     $stmt = $pdo->prepare('
         SELECT a.*, u.first_name, u.last_name
         FROM articles a
         LEFT JOIN users u ON a.user_id = u.id
-        WHERE a.slug = ? AND a.status = "published"
+        WHERE ' . $lookup . ' = ? AND a.status = "published"
         LIMIT 1
     ');
-    $stmt->execute([$slug]);
+    $stmt->execute([$legacyArticleId ?? $slug]);
     $article = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
+$isLegacyIdPage = $slug === '';
+if (isset($legacyArticleId) && !empty($article['slug']) && ($isLegacyIdPage || $slug !== $article['slug'])) {
+    site_redirect('/news/' . rawurlencode($article['slug']), 301);
+}
+
+if (!$article || empty($article['slug'])) {
+    $article = null;
+    http_response_code(404);
+}
+
 if ($article) {
+    $slug = $article['slug'];
     $pdo->prepare('UPDATE articles SET views = views + 1 WHERE id = ?')->execute([(int) $article['id']]);
     if (!empty($_SESSION['user_id'])) record_article_read($pdo, (int) $_SESSION['user_id'], (int) $article['id']);
     $similarStmt = $pdo->prepare('
@@ -93,18 +102,21 @@ $descriptionSource = $article['summary'] ?? ($article['content'] ?? '');
 $description = seo_description($descriptionSource);
 $articleUrl = '/sport_blog/news/' . rawurlencode($slug);
 $shareUrl = absolute_site_url($articleUrl);
-$canonicalUrl = $article ? $shareUrl : absolute_site_url('/sport_blog/');
+$canonicalUrl = $article ? $shareUrl : '';
 $metaImage = absolute_site_url(article_image_url($article['image'] ?? null));
 $jsonLd = $article ? article_json_ld($article, $canonicalUrl, $metaImage) : '';
 ?>
 <!DOCTYPE html>
 <html lang="ka">
 <head>
+    <link rel="alternate" type="application/rss+xml" title="Sport Blog" href="/sport_blog/feed.xml">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?> - Sport Blog</title>
     <meta name="description" content="<?= htmlspecialchars($description, ENT_QUOTES, 'UTF-8') ?>">
-    <link rel="canonical" href="<?= htmlspecialchars($canonicalUrl, ENT_QUOTES, 'UTF-8') ?>">
+    <?php if ($article): ?>
+        <link rel="canonical" href="<?= htmlspecialchars($canonicalUrl, ENT_QUOTES, 'UTF-8') ?>">
+    <?php endif; ?>
     <meta name="robots" content="<?= $article ? 'index,follow' : 'noindex,follow' ?>">
     <meta property="og:title" content="<?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?>">
     <meta property="og:description" content="<?= htmlspecialchars($description, ENT_QUOTES, 'UTF-8') ?>">
@@ -118,9 +130,9 @@ $jsonLd = $article ? article_json_ld($article, $canonicalUrl, $metaImage) : '';
     <?php if ($jsonLd !== ''): ?>
         <script type="application/ld+json"><?= $jsonLd ?></script>
     <?php endif; ?>
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/article.css?v=20261119e">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/article.css?v=20261119f">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
 </head>
 <body>

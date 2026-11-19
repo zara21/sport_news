@@ -1,7 +1,14 @@
 <?php
 
+require_once __DIR__ . '/app_config.php';
+
 function site_base_url(): string
 {
+    // რეალურ სერვერზე config/site.php-ში დააყენეთ base_url — მაშინ Host header-ზე აღარ ვართ დამოკიდებული
+    $configured = rtrim((string) (app_config('site')['base_url'] ?? ''), '/');
+    if ($configured !== '') {
+        return $configured;
+    }
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     return $scheme . '://' . $host . '/sport_blog';

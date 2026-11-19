@@ -19,6 +19,10 @@ if (!empty($_SESSION['google_login_error'])) {
     unset($_SESSION['google_login_error']);
 }
 
+if (isset($_GET['password_reset'])) {
+    $success_message = 'პაროლი შეიცვალა. შედით ახალი პაროლით.';
+}
+
 if (isset($_GET['registration_success']) && $_GET['registration_success'] === 'true') {
     $success_message = 'რეგისტრაცია წარმატებით დასრულდა. ახლა შეგიძლიათ შეხვიდეთ სისტემაში.';
 }
@@ -45,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user && password_verify($password, $user['password'])) {
             auth_clear_failures($rateLimitKey);
             session_regenerate_id(true);
+            unset($user['password'], $_SESSION['form_csrf_token']);
             $_SESSION['user'] = $user;
             $_SESSION['user_id'] = $user['id'];
             $status = strtolower((string)($user['status'] ?? ''));
@@ -66,9 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>შესვლა | Sport Blog</title>
 
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/auth.css?v=20261119e">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/auth.css?v=20261119f">
 </head>
 <body class="sport-body">
 <?php require_once __DIR__ . '/../includes/header.php'; ?>
@@ -94,9 +99,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="login-form__input-group">
                 <label for="password" class="login-form__label">პაროლი</label>
                 <input type="password" id="password" name="password" class="login-form__input" placeholder="პაროლი" required autocomplete="current-password">
+                <a href="/sport_blog/auth_system/forgot_password" class="login-form__forgot">დაგავიწყდათ პაროლი?</a>
             </div>
 
             <button type="submit" class="login-form__submit-btn">შესვლა</button>
+
+            <?php render_google_login_button(); ?>
 
             <p class="login-form__register-link">
                 არ გაქვთ ანგარიში? <a href="/sport_blog/auth_system/register">დარეგისტრირდით</a>

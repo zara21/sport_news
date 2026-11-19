@@ -117,3 +117,25 @@
         gap: 28px 16px;
     }
 }
+
+.site-footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+}
+
+.site-footer__legal a {
+    color: var(--sb-text-soft);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.site-footer__legal a:hover {
+    color: var(--sb-accent-text);
+}
+
+@media (max-width: 760px) {
+    .site-footer__copyright {
+        flex-wrap: wrap;
+    }
+}
