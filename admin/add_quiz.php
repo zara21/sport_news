@@ -21,40 +21,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new RuntimeException('შეავსეთ ქვიზის სათაური.');
         }
 
-        if (empty($questions)) {
+        if (!is_array($questions) || !$questions) {
+            throw new RuntimeException('დაამატეთ მინიმუმ ერთი კითხვა.');
+        }
+
+        // ვალიდაცია ჩაწერამდე. ცარიელი ვარიანტების ამოღებისას სწორი პასუხის ინდექსი ხელახლა ითვლება
+        // (ადრე ინდექსი ძველი რჩებოდა და სწორ პასუხად სხვა ვარიანტი ინახებოდა)
+        $prepared = [];
+        foreach ($questions as $index => $questionText) {
+            $questionText = trim((string) $questionText);
+            $rawOptions = is_array($allOptions[$index] ?? null) ? $allOptions[$index] : [];
+            $correctOriginal = isset($correctAnswers[$index]) ? (string) $correctAnswers[$index] : '';
+            $options = [];
+            $correctIndex = -1;
+            foreach ($rawOptions as $optionIndex => $optionText) {
+                $optionText = trim((string) $optionText);
+                if ($optionText === '') continue;
+                if ((string) $optionIndex === $correctOriginal) $correctIndex = count($options);
+                $options[] = $optionText;
+            }
+            if ($questionText === '' && !$options) continue; // სრულად ცარიელი ბლოკი
+            $number = count($prepared) + 1;
+            if ($questionText === '' || count($options) < 2) {
+                throw new RuntimeException("კითხვა #{$number}: საჭიროა ტექსტი და მინიმუმ 2 ვარიანტი.");
+            }
+            if ($correctIndex < 0) {
+                throw new RuntimeException("კითხვა #{$number}: მონიშნეთ სწორი პასუხი (არაცარიელი ვარიანტი).");
+            }
+            $prepared[] = [$questionText, $options, $correctIndex];
+        }
+        if (!$prepared) {
             throw new RuntimeException('დაამატეთ მინიმუმ ერთი კითხვა.');
         }
 
         $quizImage = upload_media_file('quiz_image', __DIR__ . '/../uploads/quizzes', $imageMimes, 5 * 1024 * 1024);
 
+        $pdo->beginTransaction();
         $stmt = $pdo->prepare("INSERT INTO quizzes (title, slug, quiz_image) VALUES (?, ?, ?)");
         $stmt->execute([$quizTitle, $quizSlug, $quizImage]);
         $quizId = (int)$pdo->lastInsertId();
 
         $stmtQuestion = $pdo->prepare("INSERT INTO questions (quiz_id, question_text, correct_option) VALUES (?, ?, ?)");
         $stmtOption = $pdo->prepare("INSERT INTO options (question_id, option_text) VALUES (?, ?)");
-
-        foreach ($questions as $index => $questionText) {
-            $questionText = trim((string)$questionText);
-            $options = array_values(array_filter(array_map('trim', $allOptions[$index] ?? [])));
-            $correctIndex = isset($correctAnswers[$index]) ? (int)$correctAnswers[$index] : -1;
-
-            if ($questionText === '' || count($options) < 2 || !isset($options[$correctIndex])) {
-                continue;
-            }
-
+        foreach ($prepared as [$questionText, $options, $correctIndex]) {
             $stmtQuestion->execute([$quizId, $questionText, $correctIndex]);
             $questionId = (int)$pdo->lastInsertId();
-
             foreach ($options as $option) {
                 $stmtOption->execute([$questionId, $option]);
             }
         }
+        $pdo->commit();
 
         header("Location: ../quizzes/{$quizSlug}");
         exit;
     } catch (Throwable $e) {
-        $errors[] = $e->getMessage();
+        if ($pdo->inTransaction()) $pdo->rollBack();
+        if (!empty($quizImage)) delete_local_media($quizImage, __DIR__ . '/../uploads/quizzes');
+        $errors[] = $e instanceof RuntimeException ? $e->getMessage() : 'ქვიზი ვერ შეინახა.';
     }
 }
 
@@ -100,7 +123,7 @@ function addQuestion() {
     div.className = 'admin-card';
     div.innerHTML = `
         <label>კითხვა
-            <input type="text" name="questions[]" required>
+            <input type="text" name="questions[${qIndex}]" required>
         </label>
         <label>პასუხები</label>
         ${[0,1,2,3].map(i => `

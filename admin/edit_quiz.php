@@ -119,34 +119,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $slug = unique_slug($pdo, 'quizzes', safe_slug($slugInput !== '' ? $slugInput : $title, 'quiz'), $quizId);
             $quizImage = $quiz['quiz_image'];
+            $oldCover = $quizImage;
             $newImage = upload_quiz_image_from_file($_FILES['quiz_cover'] ?? []);
             if ($newImage) {
-                delete_quiz_image($quizImage);
                 $quizImage = $newImage;
             }
 
             $update = $pdo->prepare('UPDATE quizzes SET title = ?, slug = ?, category_id = ?, quiz_image = ? WHERE id = ?');
             $update->execute([$title, $slug, $categoryId, $quizImage, $quizId]);
+            if ($newImage && $oldCover && !media_is_referenced($pdo, quiz_image_name($oldCover))) {
+                delete_quiz_image($oldCover);
+            }
             $_SESSION['success_message'] = 'ქვიზის ძირითადი ინფორმაცია განახლდა.';
         }
 
         if (isset($_POST['save_questions'])) {
-            $ids = $_POST['question_id'] ?? [];
-            $texts = $_POST['question_text'] ?? [];
-            $correctOptions = $_POST['correct_option'] ?? [];
-            $difficulties = $_POST['difficulty'] ?? [];
-            $oldImages = $_POST['old_quiz_image'] ?? [];
-            $optionsTexts = $_POST['option_text'] ?? [];
+            $ids = is_array($_POST['question_id'] ?? null) ? $_POST['question_id'] : [];
+            $texts = is_array($_POST['question_text'] ?? null) ? $_POST['question_text'] : [];
+            $correctOptions = is_array($_POST['correct_option'] ?? null) ? $_POST['correct_option'] : [];
+            $difficulties = is_array($_POST['difficulty'] ?? null) ? $_POST['difficulty'] : [];
+            $optionsTexts = is_array($_POST['option_text'] ?? null) ? $_POST['option_text'] : [];
 
+            // არსებული სურათები ბაზიდან (არა ფორმის დამალული ველიდან — მას ვერ ვენდობით)
+            $existingStmt = $pdo->prepare('SELECT id, quiz_image FROM questions WHERE quiz_id = ?');
+            $existingStmt->execute([$quizId]);
+            $existingImages = $existingStmt->fetchAll(PDO::FETCH_KEY_PAIR);
+
+            // 1) ვალიდაცია და მომზადება
+            $prepared = [];
+            $number = 0;
             foreach ($ids as $index => $rawId) {
-                $text = trim((string)($texts[$index] ?? ''));
-                $correctOption = max(0, (int)($correctOptions[$index] ?? 0));
-                $difficulty = in_array(($difficulties[$index] ?? 'medium'), ['easy', 'medium', 'hard'], true)
-                    ? $difficulties[$index]
-                    : 'medium';
-                $image = $oldImages[$index] ?? '';
+                $isNew = $rawId === 'new';
+                $questionId = $isNew ? 0 : (int) $rawId;
+                if (!$isNew && !array_key_exists($questionId, $existingImages)) {
+                    continue; // სხვა ქვიზის ან არარსებული კითხვა
+                }
+                $text = trim((string) ($texts[$index] ?? ''));
+                $difficulty = in_array(($difficulties[$index] ?? 'medium'), ['easy', 'medium', 'hard'], true) ? $difficulties[$index] : 'medium';
 
-                $uploaded = null;
+                if ($text === '') {
+                    if (!$isNew) $prepared[] = ['delete', $questionId, $index];
+                    continue;
+                }
+                $number++;
+
+                // ცარიელი ვარიანტების ამოღება + სწორი პასუხის ინდექსის გადათვლა
+                $rawOptions = is_array($optionsTexts[$index] ?? null) ? array_values($optionsTexts[$index]) : [];
+                $correctRaw = (int) ($correctOptions[$index] ?? -1);
+                $options = [];
+                $correctIndex = -1;
+                foreach ($rawOptions as $optionIndex => $optionText) {
+                    $optionText = trim((string) $optionText);
+                    if ($optionText === '') continue;
+                    if ($optionIndex === $correctRaw) $correctIndex = count($options);
+                    $options[] = $optionText;
+                }
+                if (count($options) < 2) {
+                    throw new RuntimeException("კითხვა #{$number}: საჭიროა მინიმუმ 2 ვარიანტი.");
+                }
+                if ($correctIndex < 0) {
+                    throw new RuntimeException("კითხვა #{$number}: სწორი პასუხის ნომერი არ შეესაბამება არაცარიელ ვარიანტს.");
+                }
+                $prepared[] = [$isNew ? 'insert' : 'update', $questionId, $index, $text, $correctIndex, $difficulty, $options];
+            }
+
+            // 2) სურათების ატვირთვა (ახალი ფაილები შეცდომისას წაიშლება)
+            $newUploads = [];
+            $replacedImages = [];
+            $imagesByIndex = [];
+            foreach ($prepared as $item) {
+                [$action, $questionId, $index] = $item;
+                $current = $questionId ? (string) ($existingImages[$questionId] ?? '') : '';
+                if ($action === 'delete') {
+                    $replacedImages[] = $current;
+                    continue;
+                }
+                $imagesByIndex[$index] = $current;
                 if (!empty($_FILES['question_image']['name'][$index])) {
                     $uploaded = upload_quiz_image_from_file([
                         'name' => $_FILES['question_image']['name'][$index],
@@ -156,40 +204,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'size' => $_FILES['question_image']['size'][$index],
                     ]);
                     if ($uploaded) {
-                        delete_quiz_image($image);
-                        $image = $uploaded;
+                        $newUploads[] = $uploaded;
+                        $replacedImages[] = $current;
+                        $imagesByIndex[$index] = $uploaded;
                     }
                 }
+            }
 
-                $options = array_values(array_filter(array_map('trim', $optionsTexts[$index] ?? []), static fn($value) => $value !== ''));
-
-                if ($rawId === 'new') {
-                    if ($text === '') {
-                        continue;
-                    }
-                    $insert = $pdo->prepare('INSERT INTO questions (quiz_id, question_text, correct_option, difficulty, quiz_image) VALUES (?, ?, ?, ?, ?)');
-                    $insert->execute([$quizId, $text, $correctOption, $difficulty, $image]);
-                    $questionId = (int)$pdo->lastInsertId();
-                } else {
-                    $questionId = (int)$rawId;
-                    if ($text === '') {
-                        $oldStmt = $pdo->prepare('SELECT quiz_image FROM questions WHERE id = ? AND quiz_id = ?');
-                        $oldStmt->execute([$questionId, $quizId]);
-                        delete_quiz_image($oldStmt->fetchColumn() ?: '');
-                        $pdo->prepare('DELETE FROM options WHERE question_id = ?')->execute([$questionId]);
-                        $pdo->prepare('DELETE FROM questions WHERE id = ? AND quiz_id = ?')->execute([$questionId, $quizId]);
-                        continue;
-                    }
-
-                    $update = $pdo->prepare('UPDATE questions SET question_text = ?, correct_option = ?, difficulty = ?, quiz_image = ? WHERE id = ? AND quiz_id = ?');
-                    $update->execute([$text, $correctOption, $difficulty, $image, $questionId, $quizId]);
-                    $pdo->prepare('DELETE FROM options WHERE question_id = ?')->execute([$questionId]);
-                }
-
+            // 3) ჩაწერა ერთ transaction-ში
+            $pdo->beginTransaction();
+            try {
+                $insertQuestion = $pdo->prepare('INSERT INTO questions (quiz_id, question_text, correct_option, difficulty, quiz_image) VALUES (?, ?, ?, ?, ?)');
+                $updateQuestion = $pdo->prepare('UPDATE questions SET question_text = ?, correct_option = ?, difficulty = ?, quiz_image = ? WHERE id = ? AND quiz_id = ?');
+                $deleteOptions = $pdo->prepare('DELETE FROM options WHERE question_id = ?');
+                $deleteQuestion = $pdo->prepare('DELETE FROM questions WHERE id = ? AND quiz_id = ?');
                 $insertOption = $pdo->prepare('INSERT INTO options (question_id, option_text) VALUES (?, ?)');
-                foreach ($options as $option) {
-                    $insertOption->execute([$questionId, $option]);
+
+                foreach ($prepared as $item) {
+                    if ($item[0] === 'delete') {
+                        $deleteOptions->execute([$item[1]]);
+                        $deleteQuestion->execute([$item[1], $quizId]);
+                        continue;
+                    }
+                    [$action, $questionId, $index, $text, $correctIndex, $difficulty, $options] = $item;
+                    $image = $imagesByIndex[$index] ?? '';
+                    if ($action === 'insert') {
+                        $insertQuestion->execute([$quizId, $text, $correctIndex, $difficulty, $image]);
+                        $questionId = (int) $pdo->lastInsertId();
+                    } else {
+                        $updateQuestion->execute([$text, $correctIndex, $difficulty, $image, $questionId, $quizId]);
+                        $deleteOptions->execute([$questionId]);
+                    }
+                    foreach ($options as $option) {
+                        $insertOption->execute([$questionId, $option]);
+                    }
                 }
+                $pdo->commit();
+            } catch (Throwable $e) {
+                $pdo->rollBack();
+                foreach ($newUploads as $file) delete_quiz_image($file);
+                throw $e;
+            }
+
+            // ძველი სურათები იშლება მხოლოდ წარმატებული შენახვის შემდეგ და მხოლოდ თუ აღარ გამოიყენება
+            foreach (array_filter($replacedImages) as $oldImage) {
+                if (!media_is_referenced($pdo, quiz_image_name($oldImage))) delete_quiz_image($oldImage);
             }
 
             $_SESSION['success_message'] = 'ქვიზის კითხვები და პასუხები განახლდა.';
@@ -283,7 +342,6 @@ admin_page_start('ქვიზის რედაქტირება', ['/spor
                             <span class="admin-badge"><?= htmlspecialchars($question['difficulty'] ?? 'medium', ENT_QUOTES, 'UTF-8') ?></span>
                         </div>
                         <input type="hidden" name="question_id[]" value="<?= (int)$question['id'] ?>">
-                        <input type="hidden" name="old_quiz_image[]" value="<?= htmlspecialchars($question['quiz_image'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
                         <label>კითხვის ტექსტი
                             <textarea name="question_text[]" rows="3"><?= htmlspecialchars($question['question_text'], ENT_QUOTES, 'UTF-8') ?></textarea>
@@ -326,7 +384,6 @@ admin_page_start('ქვიზის რედაქტირება', ['/spor
                         <span class="admin-badge">new</span>
                     </div>
                     <input type="hidden" name="question_id[]" value="new">
-                    <input type="hidden" name="old_quiz_image[]" value="">
 
                     <label>კითხვის ტექსტი
                         <textarea name="question_text[]" rows="3" placeholder="ახალი კითხვის ტექსტი"></textarea>
