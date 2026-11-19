@@ -1,1 +1,363 @@
-.club-page{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:30px 0 60px}.club-hero{display:flex;align-items:center;gap:24px;padding:26px;border: 1px solid var(--sb-border);border-radius: 8px;background: var(--sb-surface);box-shadow:var(--sb-shadow)}.club-hero img{width:140px;height:140px;object-fit:contain}.club-hero p{margin:0;color: var(--sb-green-dark);font-weight:900}.club-hero h1{margin:5px 0;color: var(--sb-heading);font-size:34px}.club-hero span{color: var(--sb-text-soft)}.club-page section{margin-top:30px}.club-page h2{color: var(--sb-heading)}.club-articles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.club-articles a{overflow:hidden;border: 1px solid var(--sb-border);border-radius: 8px;background: var(--sb-surface);color: var(--sb-heading);text-decoration:none}.club-articles img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}.club-articles strong{display:block;padding:12px}.club-matches{display:grid;gap:8px}.club-matches a{display:flex;justify-content:space-between;gap:12px;padding:14px;border: 1px solid var(--sb-border);border-radius: 7px;background: var(--sb-surface);color: var(--sb-heading);text-decoration:none}.club-matches span{color: var(--sb-text-soft)}@media(max-width:800px){.club-articles{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.club-hero{align-items:flex-start;flex-direction:column}.club-hero img{width:100px;height:100px}.club-articles{grid-template-columns:1fr}.club-matches a{flex-direction:column}}
+/* ==================================================================
+   კლუბის გვერდი
+   ================================================================== */
+.club-page {
+    display: grid;
+    gap: 18px;
+    width: min(1240px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 24px 0 20px;
+}
+
+.club-hero {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 28px;
+    overflow: hidden;
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius-lg);
+    background:
+        radial-gradient(620px 260px at 0% 0%, rgba(200, 255, 46, 0.12), transparent 70%),
+        var(--sb-surface);
+}
+
+.club-hero__logo {
+    display: grid;
+    flex: 0 0 140px;
+    place-items: center;
+    width: 140px;
+    height: 140px;
+    padding: 16px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 6px var(--sb-accent-soft);
+}
+
+.club-hero__logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.club-hero__logo span {
+    color: #0a0d12;
+    font-size: 56px;
+    font-weight: 900;
+}
+
+.club-hero__info {
+    display: grid;
+    gap: 10px;
+    min-width: 0;
+}
+
+.club-hero__kicker {
+    margin: 0;
+    color: var(--sb-accent-text);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.club-hero h1 {
+    margin: 0;
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+}
+
+.club-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.club-stats div {
+    display: grid;
+    min-width: 84px;
+    padding: 10px 14px;
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius);
+    background: var(--sb-surface-2);
+}
+
+.club-stats strong {
+    color: var(--sb-heading);
+    font-size: 20px;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+}
+
+.club-stats span {
+    color: var(--sb-text-faint);
+    font-size: 12px;
+}
+
+.club-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(280px, 1fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.club-aside {
+    display: grid;
+    gap: 18px;
+}
+
+.club-section {
+    padding: 20px 22px;
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius-lg);
+    background: var(--sb-surface);
+}
+
+.club-section h2 {
+    position: relative;
+    margin: 0 0 14px;
+    padding-left: 14px;
+    font-size: 19px;
+}
+
+.club-section h2::before {
+    position: absolute;
+    top: 0.2em;
+    bottom: 0.2em;
+    left: 0;
+    width: 4px;
+    border-radius: 2px;
+    background: var(--sb-accent);
+    content: "";
+}
+
+.club-empty {
+    margin: 0;
+    color: var(--sb-text-soft);
+}
+
+/* სტატიები */
+.club-articles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.club-article {
+    display: grid;
+    gap: 8px;
+    color: var(--sb-heading);
+    text-decoration: none;
+}
+
+.club-article img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--sb-radius);
+    object-fit: cover;
+    transition: transform 0.4s var(--sb-ease);
+}
+
+.club-article div {
+    display: grid;
+    gap: 4px;
+}
+
+.club-article span {
+    color: var(--sb-text-faint);
+    font-size: 12px;
+}
+
+.club-article strong {
+    font-size: 15px;
+    line-height: 1.35;
+}
+
+.club-article:hover strong {
+    color: var(--sb-accent-text);
+}
+
+.club-article--featured {
+    position: relative;
+    grid-column: 1 / -1;
+    overflow: hidden;
+    border-radius: var(--sb-radius);
+}
+
+.club-article--featured img {
+    aspect-ratio: 21 / 9;
+    border-radius: 0;
+}
+
+.club-article--featured:hover img {
+    transform: scale(1.03);
+}
+
+.club-article--featured div {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 60px 20px 18px;
+    background: linear-gradient(180deg, transparent, rgba(5, 7, 10, 0.92));
+}
+
+.club-article--featured span {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.club-article--featured strong {
+    color: #fff;
+    font-size: 24px;
+    font-weight: 900;
+}
+
+/* ცხრილი */
+.club-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.club-table th {
+    padding: 6px 8px;
+    color: var(--sb-text-faint);
+    font-size: 11px;
+    font-weight: 800;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.club-table td {
+    padding: 9px 8px;
+    border-top: 1px solid var(--sb-border);
+    color: var(--sb-text);
+}
+
+.club-table td a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.club-table td a:hover {
+    color: var(--sb-accent-text);
+}
+
+.club-table tr.is-current td {
+    background: var(--sb-accent-soft);
+    color: var(--sb-heading);
+    font-weight: 800;
+}
+
+.club-table tr.is-current td:first-child {
+    box-shadow: inset 3px 0 0 var(--sb-accent);
+}
+
+.club-link {
+    display: inline-block;
+    margin-top: 12px;
+    color: var(--sb-accent-text);
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+/* მატჩები */
+.club-matches {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.club-matches a {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius);
+    background: var(--sb-surface-2);
+    color: var(--sb-text);
+    text-decoration: none;
+}
+
+.club-matches a:hover {
+    border-color: var(--sb-accent-border);
+}
+
+.club-matches__status {
+    color: var(--sb-text-soft);
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.club-matches__status.is-live {
+    color: var(--sb-red-text);
+}
+
+.club-matches__teams,
+.club-matches__score {
+    display: grid;
+    gap: 3px;
+}
+
+.club-matches__teams span {
+    overflow: hidden;
+    color: var(--sb-heading);
+    font-size: 13px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.club-matches__score b {
+    color: var(--sb-heading);
+    font-size: 13px;
+    text-align: right;
+}
+
+@media (max-width: 960px) {
+    .club-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 620px) {
+    .club-page {
+        width: calc(100% - 24px);
+    }
+
+    .club-hero {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+        padding: 20px;
+    }
+
+    .club-hero__logo {
+        flex-basis: 96px;
+        width: 96px;
+        height: 96px;
+    }
+
+    .club-hero h1 {
+        font-size: 30px;
+    }
+
+    .club-section {
+        padding: 16px;
+    }
+
+    .club-articles {
+        grid-template-columns: 1fr;
+    }
+
+    .club-article--featured strong {
+        font-size: 19px;
+    }
+}

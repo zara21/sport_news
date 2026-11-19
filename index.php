@@ -13,15 +13,16 @@ require_once __DIR__ . '/includes/db_connect.php';
 
     <link rel="stylesheet" href="/sport_blog/assets/vendor/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119h">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119h">
-    <link rel="stylesheet" href="/sport_blog/css/stories.css?v=20261119h">
-    <link rel="stylesheet" href="/sport_blog/css/home.css?v=20261119h">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119i">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119i">
+    <link rel="stylesheet" href="/sport_blog/css/stories.css?v=20261119i">
+    <link rel="stylesheet" href="/sport_blog/css/home.css?v=20261119i">
     <script src="/sport_blog/js/home.js?v=20260624-1" defer></script>
 </head>
 <body class="sport-body">
 <?php require_once __DIR__ . '/includes/header.php'; ?>
 <main class="site-main">
+    <h1 class="sr-only">Sport Blog — სპორტული სიახლეები, მატჩები და ცხრილები</h1>
     <?php if (isset($_GET['account_deleted'])): ?>
         <div class="home-notice" role="status">ანგარიში და მასთან დაკავშირებული მონაცემები წაიშალა.</div>
     <?php endif; ?>
@@ -31,7 +32,7 @@ require_once __DIR__ . '/includes/db_connect.php';
     <section class="home-band home-band--hero">
         <?php require_once __DIR__ . '/views/featured_articles.php'; ?>
     </section>
-    <section class="home-band home-band--matches" aria-label="ლაივ მატჩები">
+    <section class="home-band home-band--matches" id="matches" aria-label="ლაივ მატჩები">
         <?php require_once __DIR__ . '/views/matchs.php'; ?>
     </section>
     <section class="home-band home-band--latest">

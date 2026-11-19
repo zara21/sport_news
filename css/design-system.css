@@ -396,3 +396,13 @@ html[data-theme="light"] .sb-theme-toggle .sb-theme-toggle__moon { display: none
     h2,
     .sb-section-title { font-size: 21px; }
 }
+
+/* ეკრანზე დამალული, ეკრანის წამკითხველისთვის ხილული */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
