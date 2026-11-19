@@ -1,4 +1,5 @@
 RewriteEngine On
+ErrorDocument 404 /sport_blog/404.php
 SetEnv SPORT_BLOG_BASE_PATH /sport_blog
 RewriteRule ^sitemap\.xml$ sitemap.php [L]
 RewriteRule ^feed\.xml$ feed.php [L]

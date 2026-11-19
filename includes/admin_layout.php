@@ -56,10 +56,9 @@ function admin_page_start(string $title, array $extraStyles = []): void
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <?php require __DIR__ . '/head_meta.php'; ?>
         <title><?= $safeTitle ?> | Admin</title>
-        <script>try{const t=localStorage.getItem("sb-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t;}catch(e){}</script>
         <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
-        <link rel="stylesheet" href="/sport_blog/css/design-system.css?v=20261119h">
-        <link rel="stylesheet" href="/sport_blog/css/admin.css?v=20261119h">
+        <link rel="stylesheet" href="/sport_blog/css/design-system.css?v=20261119i">
+        <link rel="stylesheet" href="/sport_blog/css/admin.css?v=20261119i">
         <?php foreach ($extraStyles as $href): ?>
             <link rel="stylesheet" href="<?= htmlspecialchars($href, ENT_QUOTES, 'UTF-8') ?>">
         <?php endforeach; ?>

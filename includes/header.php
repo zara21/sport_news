@@ -28,14 +28,6 @@ $headerQuickLinks = [
 ];
 $headerIsActive = static fn(?string $needle): bool => $needle !== null && str_contains($headerPath, $needle);
 ?>
-<script>
-  (() => {
-    try {
-      const saved = localStorage.getItem('sb-theme');
-      if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
-    } catch (e) {}
-  })();
-</script>
 <header class="sport-navbar" aria-label="მთავარი ნავიგაცია">
   <div class="sport-navbar__bar">
     <div class="sport-navbar__logo-wrapper">

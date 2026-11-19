@@ -205,3 +205,120 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* 404 */
+.not-found {
+    display: grid;
+    justify-items: center;
+    gap: 16px;
+    width: min(760px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 56px 0 24px;
+    text-align: center;
+}
+
+.not-found__code {
+    color: var(--sb-heading);
+    font-size: 120px;
+    font-weight: 900;
+    letter-spacing: -0.06em;
+    line-height: 1;
+}
+
+.not-found__code span {
+    color: var(--sb-accent-text);
+}
+
+.not-found h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+.not-found > p {
+    max-width: 520px;
+    margin: 0;
+    color: var(--sb-text-soft);
+}
+
+.not-found__search {
+    display: flex;
+    gap: 8px;
+    width: min(520px, 100%);
+    margin-top: 8px;
+}
+
+.not-found__search input {
+    flex: 1;
+    min-width: 0;
+    min-height: 48px;
+    padding: 0 18px;
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius-pill);
+    background: var(--sb-surface-2);
+    color: var(--sb-heading);
+    font: inherit;
+}
+
+.not-found__search button {
+    min-height: 48px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: var(--sb-radius-pill);
+    background: var(--sb-accent);
+    color: var(--sb-on-accent);
+    font: inherit;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.not-found__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.not-found__latest {
+    width: 100%;
+    margin-top: 18px;
+    padding: 20px 24px;
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius-lg);
+    background: var(--sb-surface);
+    text-align: left;
+}
+
+.not-found__latest h2 {
+    margin: 0 0 10px;
+    font-size: 18px;
+}
+
+.not-found__latest ul {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding-left: 18px;
+}
+
+.not-found__latest a {
+    color: var(--sb-text);
+    text-decoration: none;
+}
+
+.not-found__latest a:hover {
+    color: var(--sb-accent-text);
+}
+
+@media (max-width: 560px) {
+    .not-found__code {
+        font-size: 84px;
+    }
+
+    .not-found h1 {
+        font-size: 26px;
+    }
+
+    .not-found__search {
+        flex-direction: column;
+    }
+}
