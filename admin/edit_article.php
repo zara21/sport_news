@@ -186,7 +186,7 @@ $types = [
 ];
 
 admin_page_start('სტატიის რედაქტირება', [
-    '/sport_blog/css/add_article.css?v=20261119d',
+    '/sport_blog/css/add_article.css?v=20261119e',
     'https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css',
 ]);
 ?>

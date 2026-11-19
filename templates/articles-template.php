@@ -118,9 +118,9 @@ $jsonLd = $article ? article_json_ld($article, $canonicalUrl, $metaImage) : '';
     <?php if ($jsonLd !== ''): ?>
         <script type="application/ld+json"><?= $jsonLd ?></script>
     <?php endif; ?>
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119d">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119d">
-    <link rel="stylesheet" href="/sport_blog/css/article.css?v=20261119d">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119e">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119e">
+    <link rel="stylesheet" href="/sport_blog/css/article.css?v=20261119e">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
 </head>
 <body>

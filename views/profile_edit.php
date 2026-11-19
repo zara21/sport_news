@@ -93,9 +93,9 @@ function profile_edit_h(?string $value): string
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>პროფილის რედაქტირება | Sport Blog</title>
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119d">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119d">
-    <link rel="stylesheet" href="/sport_blog/css/profile.css?v=20261119d">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119e">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119e">
+    <link rel="stylesheet" href="/sport_blog/css/profile.css?v=20261119e">
 </head>
 <body class="profile-page">
 <?php require __DIR__ . '/../includes/header.php'; ?>

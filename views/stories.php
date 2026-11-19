@@ -247,8 +247,7 @@ require_once __DIR__ . '/../includes/cache_helpers.php';
 
       document.getElementById('storyFooter').innerHTML = `
         ${story.category ? `<span class="story-viewer__category">${this.escapeHtml(story.category)}</span>` : ''}
-        <h3 class="story-viewer__title">${this.escapeHtml(story.title)}</h3>
-        <a href="${this.escapeHtml(link)}" class="story-viewer__cta">წაიკითხე სრულად <i class="fas fa-arrow-right" aria-hidden="true"></i></a>`;
+        <h3 class="story-viewer__title"><a href="${this.escapeHtml(link)}">${this.escapeHtml(story.title)}</a></h3>`;
 
       this.renderProgressBar();
       this.paused = false;
