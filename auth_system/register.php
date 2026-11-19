@@ -63,9 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>რეგისტრაცია | Sport Blog</title>
 
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119h">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119h">
-    <link rel="stylesheet" href="/sport_blog/css/auth.css?v=20261119h">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119i">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119i">
+    <link rel="stylesheet" href="/sport_blog/css/auth.css?v=20261119i">
 </head>
 <body class="sport-body">
 <?php require_once __DIR__ . '/../includes/header.php'; ?>

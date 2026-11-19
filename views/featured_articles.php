@@ -67,7 +67,7 @@ $articleLists = [
                 <div class="home-news-list <?= $listKey === 'popular' ? 'is-active' : '' ?>" data-news-panel="<?= $listKey ?>">
                     <?php foreach ($articles as $article): ?>
                         <a href="/sport_blog/news/<?= htmlspecialchars($article['slug'], ENT_QUOTES, 'UTF-8') ?>" class="home-news-list__item">
-                            <img src="<?= htmlspecialchars(article_image_url($article['image'] ?? null), ENT_QUOTES, 'UTF-8') ?>"
+                            <img src="<?= htmlspecialchars(article_image_url($article['image'] ?? null), ENT_QUOTES, 'UTF-8') ?>"<?= sb_srcset(article_image_url($article['image'] ?? null), '(max-width: 900px) 50vw, 20vw', 640) ?>
                                  alt="" width="90" height="64" loading="lazy" decoding="async">
                             <span><?= htmlspecialchars($article['title'], ENT_QUOTES, 'UTF-8') ?></span>
                         </a>
@@ -79,7 +79,7 @@ $articleLists = [
         <div class="home-feature-grid">
             <?php if (!empty($heroArticles[0])): $main = $heroArticles[0]; ?>
                 <a href="/sport_blog/news/<?= htmlspecialchars($main['slug'], ENT_QUOTES, 'UTF-8') ?>" class="home-feature home-feature--main">
-                    <img src="<?= htmlspecialchars(article_image_url($main['image'] ?? null), ENT_QUOTES, 'UTF-8') ?>"
+                    <img src="<?= htmlspecialchars(article_image_url($main['image'] ?? null), ENT_QUOTES, 'UTF-8') ?>"<?= sb_srcset(article_image_url($main['image'] ?? null), '(max-width: 900px) 100vw, 50vw', 1280) ?>
                          alt="<?= htmlspecialchars($main['title'], ENT_QUOTES, 'UTF-8') ?>" width="1200" height="675" fetchpriority="high" decoding="async">
                     <span class="home-feature__overlay">
                         <span class="home-feature__category"><?= htmlspecialchars($main['category'] ?: 'სიახლე', ENT_QUOTES, 'UTF-8') ?></span>
@@ -91,7 +91,7 @@ $articleLists = [
             <div class="home-feature__side">
                 <?php foreach (array_slice($heroArticles, 1, 2) as $article): ?>
                     <a href="/sport_blog/news/<?= htmlspecialchars($article['slug'], ENT_QUOTES, 'UTF-8') ?>" class="home-feature home-feature--side">
-                        <img src="<?= htmlspecialchars(article_image_url($article['image'] ?? null), ENT_QUOTES, 'UTF-8') ?>"
+                        <img src="<?= htmlspecialchars(article_image_url($article['image'] ?? null), ENT_QUOTES, 'UTF-8') ?>"<?= sb_srcset(article_image_url($article['image'] ?? null), '(max-width: 900px) 50vw, 20vw', 640) ?>
                              alt="<?= htmlspecialchars($article['title'], ENT_QUOTES, 'UTF-8') ?>" width="640" height="360" loading="lazy" decoding="async">
                         <span class="home-feature__overlay">
                             <strong><?= htmlspecialchars($article['title'], ENT_QUOTES, 'UTF-8') ?></strong>

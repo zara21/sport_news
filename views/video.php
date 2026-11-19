@@ -29,7 +29,7 @@ $videoArticles = cache_remember('home.video-cards.v2', 180, function () use ($pd
         <?php foreach ($videoArticles as $article): ?>
             <a href="/sport_blog/news/<?= htmlspecialchars($article['slug'], ENT_QUOTES, 'UTF-8') ?>" class="video-card sb-card">
                 <span class="video-thumbnail">
-                    <img src="<?= htmlspecialchars(article_image_url($article['image'] ?? null), ENT_QUOTES, 'UTF-8') ?>"
+                    <img src="<?= htmlspecialchars(article_image_url($article['image'] ?? null), ENT_QUOTES, 'UTF-8') ?>"<?= sb_srcset(article_image_url($article['image'] ?? null), '280px', 640) ?>
                          alt="<?= htmlspecialchars($article['title'], ENT_QUOTES, 'UTF-8') ?>" width="480" height="270" loading="lazy" decoding="async">
                     <span class="video-play-icon" aria-hidden="true">&#9654;</span>
                 </span>

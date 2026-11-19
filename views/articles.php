@@ -206,10 +206,10 @@ function articles_page_url(int $page): string
     <?php if ($isSearch || $notFound): ?>
         <meta name="robots" content="noindex,follow">
     <?php endif; ?>
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119h">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119h">
-    <link rel="stylesheet" href="/sport_blog/css/category.css?v=20261119h">
-    <link rel="stylesheet" href="/sport_blog/css/article.css?v=20261119h">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119i">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119i">
+    <link rel="stylesheet" href="/sport_blog/css/category.css?v=20261119i">
+    <link rel="stylesheet" href="/sport_blog/css/article.css?v=20261119i">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
 </head>
 <body>
@@ -231,7 +231,7 @@ function articles_page_url(int $page): string
                     <?php $slug = rawurlencode($article['slug']); ?>
                     <article class="sport-articles-article-card">
                         <a href="/sport_blog/news/<?= $slug ?>" class="sport-articles-image-link">
-                            <img src="<?= htmlspecialchars(article_image_url($article['image'] ?? null), ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($article['title'], ENT_QUOTES, 'UTF-8') ?>" class="sport-articles-article-image" loading="lazy">
+                            <img src="<?= htmlspecialchars(article_image_url($article['image'] ?? null), ENT_QUOTES, 'UTF-8') ?>"<?= sb_srcset(article_image_url($article['image'] ?? null), '(max-width: 760px) 100vw, 220px', 640) ?> alt="<?= htmlspecialchars($article['title'], ENT_QUOTES, 'UTF-8') ?>" class="sport-articles-article-image" loading="lazy">
                         </a>
                         <div class="sport-articles-article-content">
                             <h3>

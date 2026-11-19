@@ -64,9 +64,9 @@ $articles = $articles_stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <link rel="stylesheet" href="/sport_blog/assets/vendor/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119h">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119h">
-    <link rel="stylesheet" href="/sport_blog/css/category.css?v=20261119h">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119i">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119i">
+    <link rel="stylesheet" href="/sport_blog/css/category.css?v=20261119i">
 </head>
 <body class="sport-body">
 <?php require_once __DIR__ . '/../includes/header.php'; ?>
@@ -81,7 +81,7 @@ $articles = $articles_stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php if ($page === 1 && $featured): ?>
             <article class="sport-articles-article-card sport-articles-featured-article">
                 <a href="/sport_blog/news/<?= htmlspecialchars($featured['slug']) ?>" class="sport-articles-image-link">
-                    <img src="<?= htmlspecialchars(article_image_url($featured['image'] ?? null)) ?>" alt="<?= htmlspecialchars($featured['title']) ?>" class="sport-articles-featured-image">
+                    <img src="<?= htmlspecialchars(article_image_url($featured['image'] ?? null)) ?>"<?= sb_srcset(article_image_url($featured['image'] ?? null), '(max-width: 760px) 100vw, 560px', 960) ?> alt="<?= htmlspecialchars($featured['title']) ?>" class="sport-articles-featured-image">
                 </a>
 
                 <div class="sport-articles-featured-content">
@@ -104,7 +104,7 @@ $articles = $articles_stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php foreach ($articles as $article): ?>
                 <article class="sport-articles-article-card">
                     <a href="/sport_blog/news/<?= htmlspecialchars($article['slug']) ?>" class="sport-articles-image-link">
-                        <img src="<?= htmlspecialchars(article_image_url($article['image'] ?? null)) ?>" class="sport-articles-article-image" alt="<?= htmlspecialchars($article['title']) ?>">
+                        <img src="<?= htmlspecialchars(article_image_url($article['image'] ?? null)) ?>"<?= sb_srcset(article_image_url($article['image'] ?? null), '(max-width: 760px) 100vw, 220px', 640) ?> class="sport-articles-article-image" alt="<?= htmlspecialchars($article['title']) ?>">
                     </a>
 
                     <div class="sport-articles-article-content">
