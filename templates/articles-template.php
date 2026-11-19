@@ -9,6 +9,7 @@ require_once __DIR__ . '/../includes/seo_helpers.php';
 require_once __DIR__ . '/../includes/auth_helpers.php';
 require_once __DIR__ . '/../includes/user_activity_helpers.php';
 require_once __DIR__ . '/../includes/embed_helpers.php';
+require_once __DIR__ . '/../includes/comment_helpers.php';
 
 function currentArticleSlug(): string
 {
@@ -109,9 +110,9 @@ $jsonLd = $article ? article_json_ld($article, $canonicalUrl, $metaImage) : '';
 <!DOCTYPE html>
 <html lang="ka">
 <head>
-    <link rel="alternate" type="application/rss+xml" title="Sport Blog" href="/sport_blog/feed.xml">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php require __DIR__ . '/../includes/head_meta.php'; ?>
     <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?> - Sport Blog</title>
     <meta name="description" content="<?= htmlspecialchars($description, ENT_QUOTES, 'UTF-8') ?>">
     <?php if ($article): ?>
@@ -130,9 +131,9 @@ $jsonLd = $article ? article_json_ld($article, $canonicalUrl, $metaImage) : '';
     <?php if ($jsonLd !== ''): ?>
         <script type="application/ld+json"><?= $jsonLd ?></script>
     <?php endif; ?>
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119f">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119f">
-    <link rel="stylesheet" href="/sport_blog/css/article.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119g">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119g">
+    <link rel="stylesheet" href="/sport_blog/css/article.css?v=20261119g">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
 </head>
 <body>
@@ -215,6 +216,8 @@ $jsonLd = $article ? article_json_ld($article, $canonicalUrl, $metaImage) : '';
                         გაზიარება
                     </a>
                 </div>
+
+                <?php render_article_comments($pdo, $article, $articleUrl); ?>
             </article>
 
             <aside class="article-sidebar">

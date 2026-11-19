@@ -23,7 +23,7 @@ function admin_required_capability(?string $script = null): string
         'admin_articles.php' => 'articles.manage', 'add_article.php' => 'articles.manage',
         'edit_article.php' => 'articles.manage', 'delete_article.php' => 'articles.manage', 'load_articles.php' => 'articles.manage',
         'stories.php' => 'stories.manage', 'media.php' => 'media.manage',
-        'tag_aliases.php' => 'articles.manage', 'analytics.php' => 'dashboard',
+        'tag_aliases.php' => 'articles.manage', 'comments.php' => 'articles.manage', 'analytics.php' => 'dashboard',
         'quizzes.php' => 'quizzes.manage', 'add_quiz.php' => 'quizzes.manage', 'edit_quiz.php' => 'quizzes.manage',
         'delete_quiz.php' => 'quizzes.manage', 'quiz_games.php' => 'quizzes.manage', 'add_sec_quiz.php' => 'quizzes.manage',
         'edit_quiz_game.php' => 'quizzes.manage', 'delete_quiz_game.php' => 'quizzes.manage',

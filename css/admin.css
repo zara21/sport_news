@@ -1228,3 +1228,25 @@ body.admin-page {
         text-align: left;
     }
 }
+
+.admin-comments__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.admin-comments__filters .admin-search {
+    flex: 1 1 260px;
+    min-height: 40px;
+    padding: 8px 14px;
+}
+
+.admin-comments__filters select {
+    min-height: 40px;
+    padding: 8px 12px;
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius);
+    background: var(--sb-surface-2);
+    color: var(--sb-heading);
+}
