@@ -1,10 +1,8 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-require_once __DIR__ . '/../includes/db_connect.php';
 require_once __DIR__ . '/../includes/auth_helpers.php';
+auth_start_session();
+require_once __DIR__ . '/../includes/db_connect.php';
+require_once __DIR__ . '/../includes/quiz_attempts.php';
 
 $pageTitle = 'ქვიზი';
 $quiz = null;
@@ -28,23 +26,28 @@ if (empty($slug)) {
         $pageTitle = $quiz['title'] ?: $pageTitle;
         $quizImage = !empty($quiz['quiz_image']) ? '/sport_blog/uploads/quizzes/' . ltrim($quiz['quiz_image'], '/') : '';
 
-        $stmt = $pdo->prepare('SELECT * FROM questions WHERE quiz_id = ? ORDER BY id ASC');
+        $stmt = $pdo->prepare('SELECT id, question_text, quiz_image FROM questions WHERE quiz_id = ? ORDER BY id ASC');
         $stmt->execute([$quizId]);
         $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $stmtOptions = $pdo->prepare('SELECT * FROM options WHERE question_id = ? ORDER BY id ASC');
+        $stmtOptions = $pdo->prepare('SELECT option_text FROM options WHERE question_id = ? ORDER BY id ASC');
         foreach ($questions as $question) {
             $stmtOptions->execute([$question['id']]);
             $quizData[] = [
                 'question_id' => (int) $question['id'],
                 'question_text' => $question['question_text'],
                 'question_image' => $question['quiz_image'] ?? null,
-                'correct' => (int) $question['correct_option'],
                 'options' => $stmtOptions->fetchAll(PDO::FETCH_ASSOC),
             ];
         }
     }
 }
+
+$quizAttempt = !$requiresAuth && $quizData ? start_quiz_attempt('classic_quiz_attempts', [
+    'quiz_id' => $quizId,
+    'user_id' => (int) $_SESSION['user_id'],
+    'expires_at' => time() + 7200,
+]) : '';
 
 $currentUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http')
     . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost')
@@ -63,9 +66,9 @@ $currentUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' 
     <?php endif; ?>
     <meta property="og:url" content="<?= htmlspecialchars($currentUrl, ENT_QUOTES, 'UTF-8') ?>">
     <meta property="og:type" content="website">
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/quiz.css?v=20261119e">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/quiz.css?v=20261119f">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
 </head>
 <body>
@@ -124,12 +127,13 @@ $currentUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' 
 <script>
 const quizData = <?= json_encode($quizData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 const quizId = <?= $quizId ?>;
+const quizAttempt = <?= json_encode($quizAttempt) ?>;
 const quizTitle = <?= json_encode($pageTitle, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 const quizCsrfToken = <?= json_encode(form_csrf_token(), JSON_UNESCAPED_SLASHES) ?>;
 let current = 0;
 let score = 0;
 let answeredCurrent = false;
-let resultsSent = false;
+let savingResult = false;
 const answers = [];
 
 function escapeHtml(value) {
@@ -155,9 +159,6 @@ function loadQuestion() {
 
     if (current >= quizData.length) {
         quizEl.innerHTML = '';
-        nextBtn.style.display = 'none';
-        document.getElementById('resultBox').textContent = `თქვენი ქულა: ${score} / ${quizData.length}`;
-        document.getElementById('shareBox').style.display = 'flex';
         sendResults();
         return;
     }
@@ -197,9 +198,7 @@ function selectOption(selected) {
     answeredCurrent = true;
 
     const question = quizData[current];
-    const correct = Number(question.correct);
     answers.push({ question_id: question.question_id, selected });
-    if (selected === correct) score++;
 
     document.querySelectorAll('.quiz-option').forEach((label, index) => {
         label.classList.toggle('quiz-option--selected', index === selected);
@@ -209,19 +208,41 @@ function selectOption(selected) {
 }
 
 function nextQuestion() {
+    if (current >= quizData.length) {
+        sendResults();
+        return;
+    }
+    if (!answeredCurrent) return;
     current++;
     loadQuestion();
 }
 
-function sendResults() {
-    if (resultsSent) return;
-    resultsSent = true;
+async function sendResults() {
+    if (savingResult) return;
+    savingResult = true;
+    const nextBtn = document.querySelector('.quiz-next-btn');
+    const resultBox = document.getElementById('resultBox');
+    nextBtn.style.display = 'none';
+    resultBox.textContent = 'შედეგი ინახება…';
 
-    fetch('/sport_blog/admin/save_quiz_result.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': quizCsrfToken },
-        body: JSON.stringify({ quiz_id: quizId, answers })
-    }).catch(() => {});
+    try {
+        const response = await fetch('/sport_blog/admin/save_quiz_result.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': quizCsrfToken },
+            body: JSON.stringify({ quiz_id: quizId, attempt: quizAttempt, answers })
+        });
+        if (!response.ok) throw new Error('Result could not be saved');
+        const result = await response.json();
+        score = result.score;
+        resultBox.textContent = `თქვენი ქულა: ${score} / ${result.total}`;
+        document.getElementById('shareBox').style.display = 'flex';
+    } catch {
+        resultBox.textContent = 'შედეგი ვერ შეინახა.';
+        nextBtn.textContent = 'ხელახლა ცდა';
+        nextBtn.style.display = 'inline-flex';
+    } finally {
+        savingResult = false;
+    }
 }
 
 function shareOnFacebook() {

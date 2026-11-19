@@ -57,8 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $update = $pdo->prepare('UPDATE users SET first_name = ?, last_name = ?, birthdate = ?, gender = ?, phone = ?, profile_image = ? WHERE id = ?');
                 $update->execute([$firstName, $lastName, $birthdate ?: null, $gender ?: null, $phone ?: null, $profileImage ?: null, $userId]);
-                $user = array_merge($user, ['first_name' => $firstName, 'last_name' => $lastName, 'birthdate' => $birthdate, 'gender' => $gender, 'phone' => $phone, 'profile_image' => $profileImage]);
-                $_SESSION['user'] = array_merge($_SESSION['user'] ?? [], $user);
+                $profile = ['first_name' => $firstName, 'last_name' => $lastName, 'birthdate' => $birthdate, 'gender' => $gender, 'phone' => $phone, 'profile_image' => $profileImage];
+                $user = array_replace($user, $profile);
+                $_SESSION['user'] = array_replace($_SESSION['user'] ?? [], $profile);
                 $successMessage = 'პროფილი განახლდა.';
             } elseif ($action === 'password') {
                 $currentPassword = (string) ($_POST['current_password'] ?? '');
@@ -93,9 +94,9 @@ function profile_edit_h(?string $value): string
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>პროფილის რედაქტირება | Sport Blog</title>
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/profile.css?v=20261119e">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/profile.css?v=20261119f">
 </head>
 <body class="profile-page">
 <?php require __DIR__ . '/../includes/header.php'; ?>

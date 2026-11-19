@@ -1,10 +1,8 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-require_once __DIR__ . '/../includes/db_connect.php';
 require_once __DIR__ . '/../includes/auth_helpers.php';
+auth_start_session();
+require_once __DIR__ . '/../includes/db_connect.php';
+require_once __DIR__ . '/../includes/quiz_attempts.php';
 
 $pageTitle = 'ქვიზი';
 $quiz = null;
@@ -32,13 +30,21 @@ if (empty($slug)) {
         $pageTitle = $quiz['title'] ?: $pageTitle;
         $statLabel = $statLabels[$quiz['stat_type']] ?? $statLabel;
 
-        $stmt = $pdo->prepare('SELECT * FROM quiz_game_questions WHERE quiz_game_id = ? ORDER BY stat_value DESC, id ASC');
+        $stmt = $pdo->prepare('SELECT player_name_geo, player_name_eng, stat_value
+            FROM quiz_game_questions WHERE quiz_game_id = ? ORDER BY stat_value DESC, id ASC');
         $stmt->execute([$quiz['id']]);
         $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 
 $duration = max(1, (int)($quiz['duration_minutes'] ?? 5));
+$gameAttempt = $questions ? start_quiz_attempt('game_quiz_attempts', [
+    'game_id' => (int) $quiz['id'],
+    'user_id' => (int) ($_SESSION['user_id'] ?? 0),
+    'ends_at' => time() + $duration * 60,
+    'players' => $questions,
+    'guessed' => [],
+]) : '';
 $quizImage = !empty($quiz['image']) ? '/sport_blog/uploads/' . ltrim($quiz['image'], '/') : '';
 ?>
 <!DOCTYPE html>
@@ -47,9 +53,9 @@ $quizImage = !empty($quiz['image']) ? '/sport_blog/uploads/' . ltrim($quiz['imag
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?> - Sport Blog</title>
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/quiz.css?v=20261119e">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/quiz.css?v=20261119f">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
 </head>
 <body>
@@ -81,10 +87,11 @@ $quizImage = !empty($quiz['image']) ? '/sport_blog/uploads/' . ltrim($quiz['imag
                     </div>
 
                     <div class="quiz-answer-row">
-                        <input class="quiz-answer-input" type="text" id="answerInput" placeholder="მაგ: Cristiano Ronaldo" autocomplete="off">
+                        <input class="quiz-answer-input" type="text" id="answerInput" placeholder="ჩაწერეთ მოთამაშის სახელი" autocomplete="off" maxlength="255" aria-label="მოთამაშის სახელი">
                         <button class="quiz-button quiz-button--primary quiz-submit-btn" type="button" onclick="submitAnswer()">დადასტურება</button>
                     </div>
                     <p class="quiz-feedback" id="feedback" aria-live="polite"></p>
+                    <button class="quiz-button quiz-button--ghost" type="button" id="retryResult" hidden>ხელახლა ცდა</button>
                 </div>
 
                 <div class="quiz-game-side">
@@ -112,111 +119,119 @@ $quizImage = !empty($quiz['image']) ? '/sport_blog/uploads/' . ltrim($quiz['imag
 
 <?php if (!$errorMessage): ?>
 <script>
-const players = <?= json_encode($questions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
-let guessed = Array(players.length).fill(false);
-let finished = false;
-let correctCount = 0;
-const gameId = <?= (int)($quiz['id'] ?? 0) ?>;
-const resultCsrf = <?= json_encode(!empty($_SESSION['user_id']) ? form_csrf_token() : '') ?>;
-
+const stats = <?= json_encode(array_column($questions, 'stat_value')) ?>;
+const attempt = <?= json_encode($gameAttempt) ?>;
+const csrf = <?= json_encode(form_csrf_token()) ?>;
+const input = document.getElementById('answerInput');
+const submitButton = document.querySelector('.quiz-submit-btn');
+const retryButton = document.getElementById('retryResult');
+const feedback = document.getElementById('feedback');
+const timeDisplay = document.getElementById('time');
+const countDisplay = document.getElementById('correctCount');
 const tableBody = document.getElementById('playerTable');
-players.forEach((player, index) => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-        <td></td>
-        <td id="playerCell${index}"></td>
-    `;
-    row.firstElementChild.textContent = player.stat_value ?? "";
-    tableBody.appendChild(row);
+let deadline = performance.now() + <?= $duration ?> * 60000;
+let pending = false;
+let finished = false;
+
+const cells = stats.map((value) => {
+    const row = tableBody.insertRow();
+    row.insertCell().textContent = value ?? '';
+    return row.insertCell();
 });
 
-function normalize(value) {
-    return String(value || '').trim().toLowerCase();
+function showResult(result) {
+    finished = true;
+    clearInterval(timer);
+    input.disabled = true;
+    submitButton.disabled = true;
+    countDisplay.textContent = result.score;
+    result.players.forEach((player, index) => {
+        cells[index].textContent = player.name;
+        cells[index].classList.add(player.guessed ? 'correct' : 'missed');
+    });
+    if (result.score < result.total) timeDisplay.textContent = '0:00';
+    feedback.textContent = result.score === result.total
+        ? 'ყველა მოთამაშე გამოცნობილია.'
+        : 'დრო ამოიწურა. ქვიზი დასრულდა.';
+}
+
+async function requestGame(action, guess) {
+    pending = true;
+    submitButton.disabled = true;
+    retryButton.hidden = true;
+    try {
+        const response = await fetch('/sport_blog/api/save_quiz_game_result.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+            body: JSON.stringify({ attempt, action, guess })
+        });
+        const result = await response.json();
+        if (Number.isInteger(result.remaining)) {
+            deadline = performance.now() + result.remaining * 1000;
+            input.disabled = false;
+            return;
+        }
+        if (!response.ok) throw new Error('Quiz request failed');
+
+        if (result.finished) {
+            showResult(result);
+            return;
+        }
+
+        result.matches.forEach(({ index, name }) => {
+            cells[index].textContent = name;
+            cells[index].classList.add('correct');
+        });
+        countDisplay.textContent = result.score;
+        if (result.matches.length) {
+            if (input.value.trim() === guess) input.value = '';
+            feedback.textContent = '';
+        } else {
+            feedback.textContent = 'მოთამაშე ვერ მოიძებნა ან შეცდომითაა შეყვანილი.';
+        }
+    } catch {
+        feedback.textContent = 'კავშირი შეფერხდა. სცადეთ ხელახლა.';
+        if (action === 'finish') retryButton.hidden = false;
+    } finally {
+        pending = false;
+        submitButton.disabled = finished || input.disabled;
+    }
+    if (!finished && Number(countDisplay.textContent) === stats.length && retryButton.hidden) {
+        finishGame();
+    }
 }
 
 function submitAnswer() {
-    if (finished) return;
-
-    const input = document.getElementById('answerInput');
-    const feedback = document.getElementById('feedback');
-    const guess = normalize(input.value);
-    feedback.textContent = '';
-
-    if (!guess) return;
-
-    let found = false;
-    players.forEach((player, index) => {
-        if (guessed[index]) return;
-
-        if (normalize(player.player_name_geo) === guess || normalize(player.player_name_eng) === guess) {
-            const cell = document.getElementById('playerCell' + index);
-            cell.textContent = player.player_name_geo;
-            cell.classList.add('correct');
-            guessed[index] = true;
-            correctCount++;
-            found = true;
-        }
-    });
-
-    if (found) {
-        input.value = '';
-        document.getElementById('correctCount').textContent = correctCount;
-        if (correctCount === players.length) finishGame('ყველა მოთამაშე გამოცნობილია.');
-    } else {
-        feedback.textContent = 'მოთამაშე ვერ მოიძებნა ან შეცდომითაა შეყვანილი.';
-        input.classList.add('incorrect');
-        setTimeout(() => input.classList.remove('incorrect'), 800);
-    }
+    const guess = input.value.trim();
+    if (finished || pending || input.disabled || !guess) return;
+    requestGame('guess', guess);
 }
 
-document.getElementById('answerInput').addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') submitAnswer();
-});
-
-let time = <?= $duration ?> * 60;
-const timeDisplay = document.getElementById('time');
+function finishGame() {
+    if (finished || pending) return;
+    input.disabled = true;
+    requestGame('finish');
+}
 
 function updateTimer() {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-    timeDisplay.textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
-
-    if (time === 0) {
-        finishGame('დრო ამოიწურა. ქვიზი დასრულდა.');
-        return;
-    }
-
-    time--;
+    const seconds = Math.max(0, Math.ceil((deadline - performance.now()) / 1000));
+    timeDisplay.textContent = Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0');
+    if (seconds === 0 && retryButton.hidden) finishGame();
 }
 
-const timer = setInterval(updateTimer, 1000);
-updateTimer();
+input.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') submitAnswer();
+});
+retryButton.addEventListener('click', finishGame);
 
-function finishGame(message) {
-    if (finished) return;
-    finished = true;
-    clearInterval(timer);
-
-    const input = document.getElementById('answerInput');
+const timer = attempt ? setInterval(updateTimer, 1000) : null;
+if (timer) {
+    updateTimer();
+} else {
     input.disabled = true;
-    document.querySelector('.quiz-submit-btn').disabled = true;
-
-    players.forEach((player, index) => {
-        if (!guessed[index]) {
-            const cell = document.getElementById('playerCell' + index);
-            cell.textContent = player.player_name_geo;
-            cell.classList.add('missed');
-        }
-    });
-
-    document.getElementById('feedback').textContent = message;
-    if (resultCsrf) {
-        fetch('/sport_blog/api/save_quiz_game_result.php', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json','X-CSRF-Token':resultCsrf},
-            body: JSON.stringify({game_id: gameId, guessed_ids: players.filter((_, index) => guessed[index]).map(player => player.id)})
-        }).catch(() => {});
-    }
+    submitButton.disabled = true;
+    timeDisplay.textContent = '—';
+    feedback.textContent = 'ამ ქვიზს ჯერ კითხვები არ აქვს დამატებული.';
 }
 </script>
 <?php endif; ?>

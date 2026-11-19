@@ -83,7 +83,7 @@
 }
 
 @media (max-width: 900px) {
-    :root { --sb-nav-height: 105px; }
+    :root { --sb-nav-height: 151px; }
 }
 
 html[data-theme="light"] {

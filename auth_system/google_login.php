@@ -132,6 +132,7 @@ if (!$user) {
 
 session_regenerate_id(true);
 unset($user['password']);
+unset($_SESSION['form_csrf_token']);
 $_SESSION['user'] = $user;
 $_SESSION['user_id'] = (int) $user['id'];
 

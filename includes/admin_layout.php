@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/admin_helpers.php';
 require_once __DIR__ . '/brand.php';
+require_once __DIR__ . '/auth_helpers.php';
 
 function admin_nav_item(string $href, string $icon, string $label): void
 {
@@ -56,8 +57,8 @@ function admin_page_start(string $title, array $extraStyles = []): void
         <title><?= $safeTitle ?> | Admin</title>
         <script>try{const t=localStorage.getItem("sb-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t;}catch(e){}</script>
         <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
-        <link rel="stylesheet" href="/sport_blog/css/design-system.css?v=20261119e">
-        <link rel="stylesheet" href="/sport_blog/css/admin.css?v=20261119e">
+        <link rel="stylesheet" href="/sport_blog/css/design-system.css?v=20261119f">
+        <link rel="stylesheet" href="/sport_blog/css/admin.css?v=20261119f">
         <?php foreach ($extraStyles as $href): ?>
             <link rel="stylesheet" href="<?= htmlspecialchars($href, ENT_QUOTES, 'UTF-8') ?>">
         <?php endforeach; ?>
@@ -109,7 +110,10 @@ function admin_page_start(string $title, array $extraStyles = []): void
                 <?php sb_render_theme_toggle(); ?>
                 <span class="admin-topbar__user"><?= $safeUserName ?></span>
                 <a href="/sport_blog/views/profile" class="admin-button admin-button--neutral">პროფილი</a>
-                <a href="/sport_blog/auth_system/logout" class="admin-button admin-button--danger">გასვლა</a>
+                <form action="/sport_blog/auth_system/logout" method="post">
+                    <?php render_logout_token(); ?>
+                    <button type="submit" class="admin-button admin-button--danger">გასვლა</button>
+                </form>
             </div>
         </header>
     <?php

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/brand.php';
+require_once __DIR__ . '/auth_helpers.php';
 
 if (!empty($_SESSION['user_id']) && isset($pdo) && $pdo instanceof PDO) {
     require_once __DIR__ . '/user_activity_helpers.php';
@@ -47,6 +48,12 @@ $headerIsActive = static fn(?string $needle): bool => $needle !== null && str_co
       <?php endforeach; ?>
     </nav>
 
+    <form class="sport-navbar__search" role="search" action="/sport_blog/views/articles" method="get">
+      <input type="search" name="q" aria-label="სტატიების ძებნა" placeholder="სტატიების ძებნა" maxlength="120" required
+             value="<?= htmlspecialchars($articleSearch ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+      <button type="submit" aria-label="ძებნა"><i class="fas fa-search" aria-hidden="true"></i></button>
+    </form>
+
     <div class="sport-navbar__auth">
       <?php sb_render_theme_toggle(); ?>
       <?php if (!$headerIsLoggedIn): ?>
@@ -55,7 +62,10 @@ $headerIsActive = static fn(?string $needle): bool => $needle !== null && str_co
       <?php else: ?>
         <a href="/sport_blog/views/notifications" class="sport-navbar__notification" aria-label="შეტყობინებები"><i class="fas fa-bell"></i><?php if ($headerUnreadCount): ?><span><?= min(99, $headerUnreadCount) ?></span><?php endif; ?></a>
         <a href="/sport_blog/views/profile" class="sport-navbar__auth-button sport-navbar__auth-button--login"><i class="fas fa-user"></i> პროფილი</a>
-        <a href="/sport_blog/auth_system/logout" class="sport-navbar__icon-button" aria-label="გასვლა" title="გასვლა"><i class="fas fa-sign-out-alt"></i></a>
+        <form action="/sport_blog/auth_system/logout" method="post">
+          <?php render_logout_token(); ?>
+          <button type="submit" class="sport-navbar__icon-button" aria-label="გასვლა" title="გასვლა"><i class="fas fa-sign-out-alt" aria-hidden="true"></i></button>
+        </form>
       <?php endif; ?>
     </div>
 
@@ -108,7 +118,10 @@ $headerIsActive = static fn(?string $needle): bool => $needle !== null && str_co
     <?php else: ?>
       <a href="/sport_blog/views/notifications" class="sport-navbar__auth-button sport-navbar__auth-button--login">შეტყობინებები<?= $headerUnreadCount ? ' (' . $headerUnreadCount . ')' : '' ?></a>
       <a href="/sport_blog/views/profile" class="sport-navbar__auth-button sport-navbar__auth-button--login">პროფილი</a>
-      <a href="/sport_blog/auth_system/logout" class="sport-navbar__auth-button sport-navbar__auth-button--register">გასვლა</a>
+      <form action="/sport_blog/auth_system/logout" method="post">
+        <?php render_logout_token(); ?>
+        <button type="submit" class="sport-navbar__auth-button sport-navbar__auth-button--register">გასვლა</button>
+      </form>
     <?php endif; ?>
   </div>
 </div>

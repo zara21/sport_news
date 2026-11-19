@@ -36,6 +36,8 @@ $checks = [
     ['tennis category', "{$base}/category/tennis", [200]],
     ['articles page 1', "{$base}/views/articles.php?page=1", [200]],
     ['articles page 2', "{$base}/views/articles.php?page=2", [200]],
+    ['missing article', "{$base}/news/smoke-missing-article-420fe9", [404]],
+    ['missing legacy article', "{$base}/views/article.php?id=0", [404]],
     ['quizzes', "{$base}/views/all_quizzes", [200]],
     ['login', "{$base}/auth_system/login", [200]],
     ['register', "{$base}/auth_system/register", [200]],
@@ -47,6 +49,10 @@ $checks = [
     ['admin quiz editor protected', "{$base}/admin/edit_quiz_game.php?id=1", [302]],
     ['admin events protected', "{$base}/admin/manage_UFC_F1_event.php", [302]],
     ['admin import protected', "{$base}/admin/import/admin_panel.php", [302]],
+    ['import CSV private', "{$base}/admin/import/premier_league_table.csv", [403]],
+    ['import Python private', "{$base}/admin/import/update_db.py", [403]],
+    ['logout requires POST', "{$base}/auth_system/logout", [405]],
+    ['token registration requires POST', "{$base}/api/save_token.php", [405]],
     ['admin aliases protected', "{$base}/admin/tag_aliases.php", [302]],
     ['admin analytics protected', "{$base}/admin/analytics.php", [302]],
     ['admin stories protected', "{$base}/admin/stories.php", [302]],
@@ -83,6 +89,16 @@ foreach ($dynamicRoutes as $label => $route) {
 }
 
 $home = smoke_request("{$base}/");
+$searchTerm = $pdo->query("SELECT title FROM articles WHERE status = 'published' AND slug <> ''
+    AND slug NOT LIKE 'default-story-%' AND CHAR_LENGTH(title) BETWEEN 1 AND 120 ORDER BY id LIMIT 1")->fetchColumn();
+if ($searchTerm !== false) {
+    $search = smoke_request("{$base}/views/articles?q=" . rawurlencode($searchTerm));
+    $ok = smoke_result($search['status'] === 200
+        && str_contains($search['body'], '<meta name="robots" content="noindex,follow">')
+        && str_contains($search['body'], 'sport-articles-article-card')
+        && str_contains($search['body'], htmlspecialchars($searchTerm, ENT_QUOTES, 'UTF-8')),
+        'public article search') && $ok;
+}
 $homeScript = smoke_request("{$base}/js/home.js");
 $imageCount = preg_match_all('/<img\b/i', $home['body']);
 $lazyCount = preg_match_all('/loading=["\']lazy["\']/i', $home['body']);
@@ -93,6 +109,7 @@ $ok = smoke_result($imageCount === 0 || ($lazyCount / $imageCount) >= 0.75, 'hom
 $ok = smoke_result($imageCount === 0 || ($dimensionCount / $imageCount) >= 0.95, 'home image dimension ratio', "{$dimensionCount}/{$imageCount}") && $ok;
 $ok = smoke_result(!str_contains($home['body'], '<style'), 'home has no inline style blocks') && $ok;
 $ok = smoke_result(str_contains($home['body'], 'home-hero__grid') && str_contains($home['body'], 'data-scroll-target="matchGrid"'), 'home components rendered') && $ok;
+$ok = smoke_result(str_contains($home['body'], 'role="search"'), 'public header search form') && $ok;
 $ok = smoke_result(str_contains($homeScript['body'], 'enableDragScroll') && str_contains($homeScript['body'], 'suppressClick'), 'horizontal drag scroll enabled') && $ok;
 $ok = smoke_result(!str_contains($home['body'], 'default-story-'), 'story-only articles excluded from home feeds') && $ok;
 $ok = smoke_result(substr_count($home['body'], 'class="home-match-card sb-card"') <= 12, 'home initial match limit') && $ok;

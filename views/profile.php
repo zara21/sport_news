@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../includes/db_connect.php';
+require_once __DIR__ . '/../includes/auth_helpers.php';
 
 if (empty($_SESSION['user_id']) && empty($_SESSION['user']['id'])) {
     header('Location: /sport_blog/auth_system/login');
@@ -54,9 +55,9 @@ $authProvider = $user['oauth_provider'] ?: 'manual';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ჩემი პროფილი | Sport Blog</title>
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119e">
-    <link rel="stylesheet" href="/sport_blog/css/profile.css?v=20261119e">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/profile.css?v=20261119f">
 </head>
 <body class="profile-page">
 <?php include __DIR__ . '/../includes/header.php'; ?>
@@ -124,7 +125,10 @@ $authProvider = $user['oauth_provider'] ?: 'manual';
                     <a href="/sport_blog/views/notifications" class="user-profile__button user-profile__button--neutral">შეტყობინებები</a>
                     <a href="/sport_blog/views/profile_edit" class="user-profile__button user-profile__button--primary">პროფილის რედაქტირება</a>
                     <a href="/sport_blog/" class="user-profile__button user-profile__button--neutral">მთავარი</a>
-                    <a href="/sport_blog/auth_system/logout" class="user-profile__button user-profile__button--danger">გასვლა</a>
+                    <form action="/sport_blog/auth_system/logout" method="post">
+                        <?php render_logout_token(); ?>
+                        <button type="submit" class="user-profile__button user-profile__button--danger">გასვლა</button>
+                    </form>
                 </div>
             </aside>
         </div>

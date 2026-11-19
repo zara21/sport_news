@@ -210,7 +210,9 @@
 
 .user-profile__button--danger {
     background: var(--sb-red);
+    border: 1px solid transparent;
     color: var(--sb-on-media);
+    cursor: pointer;
 }
 
 .user-profile__button--primary {
