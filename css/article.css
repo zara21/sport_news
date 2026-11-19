@@ -823,3 +823,118 @@ body {
     clip: rect(0 0 0 0);
     white-space: nowrap;
 }
+
+/* ==================================================================
+   კითხვის პროგრესი და გაზიარება
+   ================================================================== */
+.reading-progress {
+    position: fixed;
+    top: var(--sb-nav-height);
+    right: 0;
+    left: 0;
+    z-index: 999;
+    height: 3px;
+    pointer-events: none;
+}
+
+.reading-progress span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--sb-accent), #2ee6a6);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.08s linear;
+}
+
+.article-share-bar {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.article-share-bar__label {
+    margin-right: 4px;
+    color: var(--sb-text-faint);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.article-share-bar__btn {
+    display: inline-grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 1px solid var(--sb-border);
+    border-radius: 50%;
+    background: var(--sb-surface-2);
+    color: var(--sb-text);
+    font-size: 16px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.15s var(--sb-ease), background 0.15s var(--sb-ease), color 0.15s var(--sb-ease), border-color 0.15s var(--sb-ease);
+}
+
+.article-share-bar__btn:hover {
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+.article-share-bar__btn--facebook:hover { border-color: #1877f2; background: #1877f2; }
+.article-share-bar__btn--messenger:hover { border-color: #0084ff; background: #0084ff; }
+.article-share-bar__btn--telegram:hover { border-color: #229ed9; background: #229ed9; }
+.article-share-bar__btn--whatsapp:hover { border-color: #25d366; background: #25d366; }
+.article-share-bar__btn--x:hover { border-color: #000; background: #000; }
+
+.article-share-bar__btn--native,
+.article-share-bar__btn[data-share-copy] {
+    color: var(--sb-text);
+}
+
+.article-share-bar__btn--native:hover,
+.article-share-bar__btn[data-share-copy]:hover {
+    border-color: var(--sb-accent);
+    background: var(--sb-accent);
+    color: var(--sb-on-accent);
+}
+
+/* Messenger-ის ბმული მხოლოდ ტელეფონზე მუშაობს */
+.article-share-bar__btn--mobile {
+    display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .article-share-bar__btn--mobile {
+        display: inline-grid;
+    }
+}
+
+.article-share-bar__toast {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    padding: 6px 12px;
+    border-radius: var(--sb-radius-pill);
+    background: var(--sb-accent);
+    color: var(--sb-on-accent);
+    font-size: 13px;
+    font-weight: 800;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.2s var(--sb-ease), transform 0.2s var(--sb-ease);
+    pointer-events: none;
+}
+
+.article-share-bar__toast.is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+.article-share-bar__toast:empty {
+    display: none;
+}

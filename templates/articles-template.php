@@ -131,14 +131,17 @@ $jsonLd = $article ? article_json_ld($article, $canonicalUrl, $metaImage) : '';
     <?php if ($jsonLd !== ''): ?>
         <script type="application/ld+json"><?= $jsonLd ?></script>
     <?php endif; ?>
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119h">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119h">
-    <link rel="stylesheet" href="/sport_blog/css/article.css?v=20261119h">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119i">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119i">
+    <link rel="stylesheet" href="/sport_blog/css/article.css?v=20261119i">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
 </head>
 <body>
 <?php require __DIR__ . '/../includes/header.php'; ?>
 
+<?php if ($article): ?>
+    <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+<?php endif; ?>
 <main class="article-page">
     <?php if (!$article): ?>
         <section class="article-not-found">
@@ -161,10 +164,16 @@ $jsonLd = $article ? article_json_ld($article, $canonicalUrl, $metaImage) : '';
                             </a>
                         <?php endif; ?>
                         <span><i class="far fa-calendar"></i> <?= date('Y-m-d', strtotime($article['created_at'])) ?></span>
+                        <?php
+                        // კითხვის დრო: ~180 სიტყვა წუთში
+                        $wordCount = count(preg_split('/\s+/u', trim(strip_tags(($article['summary'] ?? '') . ' ' . $article['content'])), -1, PREG_SPLIT_NO_EMPTY));
+                        $readingMinutes = max(1, (int) ceil($wordCount / 180));
+                        ?>
+                        <span><i class="far fa-clock"></i> <?= $readingMinutes ?> წთ კითხვა</span>
                     </div>
                 </div>
 
-                <img class="article-hero-image" src="<?= htmlspecialchars(article_image_url($article['image'] ?? null), ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($article['title'], ENT_QUOTES, 'UTF-8') ?>">
+                <img class="article-hero-image" src="<?= htmlspecialchars(article_image_url($article['image'] ?? null), ENT_QUOTES, 'UTF-8') ?>"<?= sb_srcset(article_image_url($article['image'] ?? null), '(max-width: 900px) 100vw, 820px', 1280) ?> alt="<?= htmlspecialchars($article['title'], ENT_QUOTES, 'UTF-8') ?>">
 
                 <?php if (!empty($article['summary'])): ?>
                     <p class="article-summary"><?= htmlspecialchars($article['summary'], ENT_QUOTES, 'UTF-8') ?></p>
@@ -211,10 +220,26 @@ $jsonLd = $article ? article_json_ld($article, $canonicalUrl, $metaImage) : '';
                         </form>
                     <?php endif; ?>
 
-                    <a class="article-share" href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($shareUrl) ?>" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-facebook-f"></i>
-                        გაზიარება
-                    </a>
+</div>
+
+                <?php
+                $shareText = $article['title'];
+                $shareLinks = [
+                    ['facebook', 'Facebook', 'fab fa-facebook-f', 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode($shareUrl)],
+                    ['messenger', 'Messenger', 'fab fa-facebook-messenger', 'fb-messenger://share/?link=' . rawurlencode($shareUrl)],
+                    ['telegram', 'Telegram', 'fab fa-telegram-plane', 'https://t.me/share/url?url=' . rawurlencode($shareUrl) . '&text=' . rawurlencode($shareText)],
+                    ['whatsapp', 'WhatsApp', 'fab fa-whatsapp', 'https://wa.me/?text=' . rawurlencode($shareText . ' ' . $shareUrl)],
+                    ['x', 'X', 'fab fa-x-twitter', 'https://twitter.com/intent/tweet?url=' . rawurlencode($shareUrl) . '&text=' . rawurlencode($shareText)],
+                ];
+                ?>
+                <div class="article-share-bar" data-share-url="<?= htmlspecialchars($shareUrl, ENT_QUOTES, 'UTF-8') ?>" data-share-title="<?= htmlspecialchars($shareText, ENT_QUOTES, 'UTF-8') ?>">
+                    <span class="article-share-bar__label">გაზიარება</span>
+                    <button type="button" class="article-share-bar__btn article-share-bar__btn--native" data-share-native hidden aria-label="გაზიარება"><i class="fas fa-share-nodes" aria-hidden="true"></i></button>
+                    <?php foreach ($shareLinks as [$key, $label, $icon, $href]): ?>
+                        <a class="article-share-bar__btn article-share-bar__btn--<?= $key ?><?= $key === 'messenger' ? ' article-share-bar__btn--mobile' : '' ?>" href="<?= htmlspecialchars($href, ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener noreferrer" aria-label="<?= $label ?>" title="<?= $label ?>"><i class="<?= $icon ?>" aria-hidden="true"></i></a>
+                    <?php endforeach; ?>
+                    <button type="button" class="article-share-bar__btn" data-share-copy aria-label="ბმულის კოპირება" title="ბმულის კოპირება"><i class="fas fa-link" aria-hidden="true"></i></button>
+                    <span class="article-share-bar__toast" data-share-toast role="status" aria-live="polite"></span>
                 </div>
 
                 <?php render_article_comments($pdo, $article, $articleUrl); ?>
@@ -240,7 +265,7 @@ $jsonLd = $article ? article_json_ld($article, $canonicalUrl, $metaImage) : '';
                 <div class="article-related-grid">
                     <?php foreach ($relatedArticles as $related): ?>
                         <a class="article-related-card" href="/sport_blog/news/<?= htmlspecialchars($related['slug'], ENT_QUOTES, 'UTF-8') ?>">
-                            <img src="<?= htmlspecialchars(article_image_url($related['image'] ?? null), ENT_QUOTES, 'UTF-8') ?>" alt="">
+                            <img src="<?= htmlspecialchars(article_image_url($related['image'] ?? null), ENT_QUOTES, 'UTF-8') ?>"<?= sb_srcset(article_image_url($related['image'] ?? null), '(max-width: 760px) 100vw, 25vw', 640) ?> alt="">
                             <strong><?= htmlspecialchars(mb_strimwidth($related['title'], 0, 80, '...'), ENT_QUOTES, 'UTF-8') ?></strong>
                             <span><?= date('Y-m-d', strtotime($related['created_at'])) ?></span>
                         </a>
@@ -252,5 +277,58 @@ $jsonLd = $article ? article_json_ld($article, $canonicalUrl, $metaImage) : '';
 </main>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>
+<?php if ($article): ?>
+<script>
+  (() => {
+    // კითხვის პროგრესი
+    const bar = document.getElementById('readingProgress');
+    const content = document.querySelector('.article-main');
+    if (bar && content) {
+      const update = () => {
+        const rect = content.getBoundingClientRect();
+        const total = rect.height - window.innerHeight * 0.6;
+        const progress = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 1;
+        bar.style.transform = `scaleX(${progress})`;
+      };
+      update();
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+    }
+
+    // გაზიარება
+    const share = document.querySelector('.article-share-bar');
+    if (!share) return;
+    const url = share.dataset.shareUrl;
+    const title = share.dataset.shareTitle;
+    const toast = share.querySelector('[data-share-toast]');
+    const showToast = (text) => {
+      toast.textContent = text;
+      toast.classList.add('is-visible');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove('is-visible'), 2200);
+    };
+
+    const nativeButton = share.querySelector('[data-share-native]');
+    if (navigator.share) {
+      nativeButton.hidden = false;
+      nativeButton.addEventListener('click', () => navigator.share({ title, url }).catch(() => {}));
+    }
+
+    share.querySelector('[data-share-copy]').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(url);
+      } catch (e) {
+        const input = document.createElement('input');
+        input.value = url;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        input.remove();
+      }
+      showToast('ბმული დაკოპირდა');
+    });
+  })();
+</script>
+<?php endif; ?>
 </body>
 </html>
