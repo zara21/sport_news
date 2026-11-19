@@ -10,15 +10,13 @@ $errorMessage = '';
 
 function save_iframe_live(PDO $pdo, string $slug, string $iframeLive): void
 {
+    // ერთი და იგივე სახელიანი პარამეტრი ორჯერ არ შეიძლება (native prepares) — ვიყენებთ VALUES()-ს
     $stmt = $pdo->prepare("
         INSERT INTO match_iframes (slug, iframe_live)
-        VALUES (:slug, :iframe_live)
-        ON DUPLICATE KEY UPDATE iframe_live = :iframe_live
+        VALUES (?, ?)
+        ON DUPLICATE KEY UPDATE iframe_live = VALUES(iframe_live), updated_at = CURRENT_TIMESTAMP
     ");
-    $stmt->execute([
-        ':slug' => $slug,
-        ':iframe_live' => $iframeLive,
-    ]);
+    $stmt->execute([$slug, $iframeLive]);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
