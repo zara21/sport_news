@@ -13,6 +13,7 @@ $clubQuery = trim((string) ($_GET['club'] ?? ''));
 $clubName = $clubQuery !== '' ? (canonical_club_name($clubQuery) ?: $clubQuery) : null;
 $articleSearch = is_string($_GET['q'] ?? null) ? mb_substr(trim($_GET['q']), 0, 120, 'UTF-8') : '';
 $isSearch = $articleSearch !== '';
+$notFound = false;
 $perPage = 15;
 $page = max(1, (int)($_GET['page'] ?? 1));
 $offset = (min($page, intdiv(PHP_INT_MAX, $perPage)) - 1) * $perPage;
@@ -81,6 +82,7 @@ if ($isSearch) {
     $authorStmt = $pdo->prepare('SELECT first_name, last_name FROM users WHERE id = ? LIMIT 1');
     $authorStmt->execute([$authorId]);
     $author = $authorStmt->fetch(PDO::FETCH_ASSOC);
+    $notFound = !$author;
     $authorName = trim(($author['first_name'] ?? '') . ' ' . ($author['last_name'] ?? ''));
     $pageTitle = $authorName !== '' ? $authorName : 'ავტორი';
     $kicker = 'ავტორი';
@@ -111,6 +113,7 @@ if ($isSearch) {
     $tagStmt = $pdo->prepare('SELECT name FROM tags WHERE id = ? LIMIT 1');
     $tagStmt->execute([$tagId]);
     $tagName = $tagStmt->fetchColumn();
+    $notFound = $tagName === false;
     $canonicalClub = canonical_club_name((string) $tagName);
     if ($canonicalClub !== null) {
         $query = ['club' => $canonicalClub];
@@ -172,8 +175,14 @@ if ($isSearch) {
     $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+if ($notFound) {
+    http_response_code(404);
+    $pageTitle = 'ვერ მოიძებნა';
+    $description = 'ასეთი ავტორი ან თეგი არ არსებობს.';
+}
+
 $totalPages = max(1, (int)ceil($totalArticles / $perPage));
-if ($page > $totalPages) {
+if (!$notFound && $page > $totalPages) {
     $query = $_GET;
     $query['page'] = $totalPages;
     header('Location: /sport_blog/views/articles.php?' . http_build_query($query));
@@ -194,7 +203,7 @@ function articles_page_url(int $page): string
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <?php require __DIR__ . '/../includes/head_meta.php'; ?>
     <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?> - Sport Blog</title>
-    <?php if ($isSearch): ?>
+    <?php if ($isSearch || $notFound): ?>
         <meta name="robots" content="noindex,follow">
     <?php endif; ?>
     <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119g">
