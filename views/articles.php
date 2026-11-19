@@ -206,10 +206,10 @@ function articles_page_url(int $page): string
     <?php if ($isSearch || $notFound): ?>
         <meta name="robots" content="noindex,follow">
     <?php endif; ?>
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119g">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119g">
-    <link rel="stylesheet" href="/sport_blog/css/category.css?v=20261119g">
-    <link rel="stylesheet" href="/sport_blog/css/article.css?v=20261119g">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119h">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119h">
+    <link rel="stylesheet" href="/sport_blog/css/category.css?v=20261119h">
+    <link rel="stylesheet" href="/sport_blog/css/article.css?v=20261119h">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
 </head>
 <body>

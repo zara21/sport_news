@@ -31,8 +31,25 @@ if (!is_string($token) || !preg_match('/\A[!-~]{1,4096}\z/', $token)) {
     exit;
 }
 
+$action = $data['action'] ?? 'subscribe';
+if (!in_array($action, ['subscribe', 'unsubscribe'], true)) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
+    exit;
+}
+
 require_once __DIR__ . '/../includes/db_connect.php';
-$stmt = $pdo->prepare('INSERT INTO notification_tokens (token, subscribed_at) VALUES (?, NOW())
-    ON DUPLICATE KEY UPDATE subscribed_at = NOW()');
-$stmt->execute([$token]);
+$userId = (int) $_SESSION['user_id'];
+
+if ($action === 'unsubscribe') {
+    // მხოლოდ საკუთარი token-ის წაშლა
+    $pdo->prepare('DELETE FROM notification_tokens WHERE token = ? AND (user_id = ? OR user_id IS NULL)')->execute([$token, $userId]);
+    echo json_encode(['status' => 'ok']);
+    exit;
+}
+
+// token ეკუთვნის იმ მომხმარებელს, ვინც ბოლოს დაარეგისტრირა (მოწყობილობა შეიძლება სხვას გადაეცეს)
+$stmt = $pdo->prepare('INSERT INTO notification_tokens (token, user_id, subscribed_at) VALUES (?, ?, NOW())
+    ON DUPLICATE KEY UPDATE user_id = VALUES(user_id), subscribed_at = NOW()');
+$stmt->execute([$token, $userId]);
 echo json_encode(['status' => 'ok']);

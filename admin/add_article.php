@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 admin_page_start('სტატიის დამატება', [
-    '/sport_blog/css/add_article.css?v=20261119g',
+    '/sport_blog/css/add_article.css?v=20261119h',
     'https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css',
 ]);
 ?>

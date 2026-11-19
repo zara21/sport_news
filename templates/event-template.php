@@ -69,9 +69,9 @@ $description = $event
     <meta property="og:image" content="<?= event_h(absolute_site_url($bannerUrl)) ?>">
     <meta property="og:url" content="<?= event_h($canonicalUrl) ?>">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119g">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119g">
-    <link rel="stylesheet" href="/sport_blog/css/event.css?v=20261119g">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119h">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119h">
+    <link rel="stylesheet" href="/sport_blog/css/event.css?v=20261119h">
 </head>
 <body>
 <?php require __DIR__ . '/../includes/header.php'; ?>

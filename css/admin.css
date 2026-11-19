@@ -1250,3 +1250,17 @@ body.admin-page {
     background: var(--sb-surface-2);
     color: var(--sb-heading);
 }
+
+.admin-checkbox {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.admin-checkbox input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--sb-accent);
+}

@@ -13,10 +13,10 @@ require_once __DIR__ . '/includes/db_connect.php';
 
     <link rel="stylesheet" href="/sport_blog/assets/vendor/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119g">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119g">
-    <link rel="stylesheet" href="/sport_blog/css/stories.css?v=20261119g">
-    <link rel="stylesheet" href="/sport_blog/css/home.css?v=20261119g">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119h">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119h">
+    <link rel="stylesheet" href="/sport_blog/css/stories.css?v=20261119h">
+    <link rel="stylesheet" href="/sport_blog/css/home.css?v=20261119h">
     <script src="/sport_blog/js/home.js?v=20260624-1" defer></script>
 </head>
 <body class="sport-body">

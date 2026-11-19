@@ -31,3 +31,5 @@ Thumbs.db
 config/database.php
 config/mail.php
 config/site.php
+config/firebase.php
+config/*.json
