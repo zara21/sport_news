@@ -1,108 +1,156 @@
-<!-- header.php -->
 <?php
+require_once __DIR__ . '/brand.php';
+
 if (!empty($_SESSION['user_id']) && isset($pdo) && $pdo instanceof PDO) {
     require_once __DIR__ . '/user_activity_helpers.php';
     $headerUnreadCount = unread_notification_count($pdo, (int) $_SESSION['user_id']);
 } else {
     $headerUnreadCount = 0;
 }
+
+$headerIsLoggedIn = !empty($_SESSION['user_id']);
+$headerPath = (string) parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+$headerCategories = [
+    'football' => ['ფეხბურთი', 'fa-futbol'],
+    'basketball' => ['კალათბურთი', 'fa-basketball-ball'],
+    'tennis' => ['ჩოგბურთი', 'fa-table-tennis'],
+    'formula1' => ['ფორმულა 1', 'fa-flag-checkered'],
+    'mma' => ['MMA', 'fa-hand-fist'],
+    'rugby' => ['რაგბი', 'fa-football-ball'],
+    'other' => ['სხვა', 'fa-ellipsis-h'],
+];
+$headerQuickLinks = [
+    ['/sport_blog/views/articles', 'სიახლეები', '/views/articles'],
+    ['/sport_blog/views/all_quizzes', 'ქვიზები', '/views/all_quizzes'],
+    ['/sport_blog/#video-news', 'ვიდეოები', null],
+    ['/sport_blog/#standings', 'ცხრილები', null],
+];
+$headerIsActive = static fn(?string $needle): bool => $needle !== null && str_contains($headerPath, $needle);
 ?>
-<nav class="sport-navbar" aria-label="მთავარი ნავიგაცია">
-  <div class="sport-navbar__logo-wrapper">
-    <a href="/sport_blog/" aria-label="Sport Blog მთავარი გვერდი">
-      <img src="/sport_blog/assets/brand/sportblog-logo.svg" alt="Sport Blog" width="140" height="44">
-    </a>
-  </div>
-
-  <div class="sport-navbar__center">
-    <div class="sport-navbar__sports-inline">
-      <a href="/sport_blog/category/football" class="sport-navbar__sports-item"><i class="fas fa-futbol"></i> ფეხბურთი</a>
-      <a href="/sport_blog/category/basketball" class="sport-navbar__sports-item"><i class="fas fa-basketball-ball"></i> კალათბურთი</a>
-      <a href="/sport_blog/category/tennis" class="sport-navbar__sports-item"><i class="fas fa-table-tennis"></i> ჩოგბურთი</a>
-      <a href="/sport_blog/category/formula1" class="sport-navbar__sports-item"><i class="fas fa-flag-checkered"></i> ფორმულა 1</a>
-      <a href="/sport_blog/category/mma" class="sport-navbar__sports-item"><i class="fas fa-hand-fist"></i> MMA</a>
-      <a href="/sport_blog/category/rugby" class="sport-navbar__sports-item"><i class="fas fa-football-ball"></i> რაგბი</a>
-      <a href="/sport_blog/category/other" class="sport-navbar__sports-item"><i class="fas fa-ellipsis-h"></i> სხვა</a>
+<script>
+  (() => {
+    try {
+      const saved = localStorage.getItem('sb-theme');
+      if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
+    } catch (e) {}
+  })();
+</script>
+<header class="sport-navbar" aria-label="მთავარი ნავიგაცია">
+  <div class="sport-navbar__bar">
+    <div class="sport-navbar__logo-wrapper">
+      <?php sb_render_logo(); ?>
     </div>
 
-    <a href="/sport_blog/views/all_quizzes" class="sport-navbar__main-link">ქვიზები</a>
-    <a href="/sport_blog/#video-news" class="sport-navbar__main-link">ვიდეოები</a>
-    <a href="/sport_blog/#standings" class="sport-navbar__main-link">ცხრილები</a>
-  </div>
+    <nav class="sport-navbar__center" aria-label="სწრაფი ბმულები">
+      <?php foreach ($headerQuickLinks as [$headerHref, $headerLabel, $headerMatch]): ?>
+        <a href="<?= $headerHref ?>" class="sport-navbar__main-link<?= $headerIsActive($headerMatch) ? ' sport-navbar__main-link--active' : '' ?>"><?= $headerLabel ?></a>
+      <?php endforeach; ?>
+    </nav>
 
-  <div class="sport-navbar__auth">
-    <?php if (!isset($_SESSION['user'])): ?>
-      <a href="/sport_blog/auth_system/login" class="sport-navbar__auth-button sport-navbar__auth-button--login">შესვლა</a>
-      <a href="/sport_blog/auth_system/register" class="sport-navbar__auth-button sport-navbar__auth-button--register">რეგისტრაცია</a>
-    <?php else: ?>
-      <a href="/sport_blog/views/notifications" class="sport-navbar__notification" aria-label="შეტყობინებები"><i class="fas fa-bell"></i><?php if ($headerUnreadCount): ?><span><?= min(99, $headerUnreadCount) ?></span><?php endif; ?></a>
-      <a href="/sport_blog/views/profile" class="sport-navbar__auth-button sport-navbar__auth-button--login"><i class="fas fa-user"></i> პროფილი</a>
-      <a href="/sport_blog/auth_system/logout" class="sport-navbar__auth-button sport-navbar__auth-button--register"><i class="fas fa-sign-out-alt"></i> გასვლა</a>
-    <?php endif; ?>
-  </div>
-
-  <button class="sport-navbar__hamburger-icon" type="button" aria-label="მენიუს გახსნა" aria-expanded="false">
-    <i class="fas fa-bars"></i>
-  </button>
-
-  <div class="sport-navbar__mobile-menu" id="mobileMenu" aria-hidden="true">
-    <div class="sport-navbar__mobile-head">
-      <img src="/sport_blog/assets/brand/sportblog-logo.svg" alt="Sport Blog" width="140" height="44">
-      <button class="sport-navbar__mobile-close" type="button" aria-label="მენიუს დახურვა">&times;</button>
-    </div>
-
-    <div class="sport-navbar__mobile-section">
-      <span class="sport-navbar__mobile-title">კატეგორიები</span>
-      <div class="sport-navbar__mobile-grid">
-        <a href="/sport_blog/category/football" class="sport-navbar__main-link"><i class="fas fa-futbol"></i> ფეხბურთი</a>
-        <a href="/sport_blog/category/basketball" class="sport-navbar__main-link"><i class="fas fa-basketball-ball"></i> კალათბურთი</a>
-        <a href="/sport_blog/category/tennis" class="sport-navbar__main-link"><i class="fas fa-table-tennis"></i> ჩოგბურთი</a>
-        <a href="/sport_blog/category/formula1" class="sport-navbar__main-link"><i class="fas fa-flag-checkered"></i> ფორმულა 1</a>
-        <a href="/sport_blog/category/mma" class="sport-navbar__main-link"><i class="fas fa-hand-fist"></i> MMA</a>
-        <a href="/sport_blog/category/rugby" class="sport-navbar__main-link"><i class="fas fa-football-ball"></i> რაგბი</a>
-        <a href="/sport_blog/category/other" class="sport-navbar__main-link"><i class="fas fa-ellipsis-h"></i> სხვა</a>
-      </div>
-    </div>
-
-    <div class="sport-navbar__mobile-section">
-      <span class="sport-navbar__mobile-title">სწრაფი ბმულები</span>
-      <div class="sport-navbar__mobile-grid">
-        <a href="/sport_blog/views/all_quizzes" class="sport-navbar__main-link">ქვიზები</a>
-        <a href="/sport_blog/#video-news" class="sport-navbar__main-link">ვიდეოები</a>
-        <a href="/sport_blog/#standings" class="sport-navbar__main-link">ცხრილები</a>
-      </div>
-    </div>
-
-    <div class="sport-navbar__mobile-auth">
-      <?php if (!isset($_SESSION['user'])): ?>
+    <div class="sport-navbar__auth">
+      <?php sb_render_theme_toggle(); ?>
+      <?php if (!$headerIsLoggedIn): ?>
         <a href="/sport_blog/auth_system/login" class="sport-navbar__auth-button sport-navbar__auth-button--login">შესვლა</a>
         <a href="/sport_blog/auth_system/register" class="sport-navbar__auth-button sport-navbar__auth-button--register">რეგისტრაცია</a>
       <?php else: ?>
-        <a href="/sport_blog/views/notifications" class="sport-navbar__main-link">შეტყობინებები<?= $headerUnreadCount ? ' (' . $headerUnreadCount . ')' : '' ?></a>
-        <a href="/sport_blog/views/profile" class="sport-navbar__auth-button sport-navbar__auth-button--login">პროფილი</a>
-        <a href="/sport_blog/auth_system/logout" class="sport-navbar__auth-button sport-navbar__auth-button--register">გასვლა</a>
+        <a href="/sport_blog/views/notifications" class="sport-navbar__notification" aria-label="შეტყობინებები"><i class="fas fa-bell"></i><?php if ($headerUnreadCount): ?><span><?= min(99, $headerUnreadCount) ?></span><?php endif; ?></a>
+        <a href="/sport_blog/views/profile" class="sport-navbar__auth-button sport-navbar__auth-button--login"><i class="fas fa-user"></i> პროფილი</a>
+        <a href="/sport_blog/auth_system/logout" class="sport-navbar__icon-button" aria-label="გასვლა" title="გასვლა"><i class="fas fa-sign-out-alt"></i></a>
       <?php endif; ?>
     </div>
+
+    <div class="sport-navbar__mobile-actions">
+      <?php sb_render_theme_toggle(); ?>
+      <button class="sport-navbar__hamburger-icon" type="button" aria-label="მენიუს გახსნა" aria-expanded="false" aria-controls="mobileMenu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
   </div>
-</nav>
+
+  <nav class="sport-navbar__sports" aria-label="კატეგორიები">
+    <div class="sport-navbar__sports-inline">
+      <?php foreach ($headerCategories as $headerCategorySlug => [$headerLabel, $headerIcon]): ?>
+        <a href="/sport_blog/category/<?= $headerCategorySlug ?>" class="sport-navbar__sports-item<?= $headerIsActive('/category/' . $headerCategorySlug) ? ' sport-navbar__sports-item--active' : '' ?>"><i class="fas <?= $headerIcon ?>"></i> <?= $headerLabel ?></a>
+      <?php endforeach; ?>
+    </div>
+  </nav>
+
+</header>
+
+<div class="sport-navbar__mobile-menu" id="mobileMenu" aria-hidden="true">
+  <div class="sport-navbar__mobile-head">
+    <?php sb_render_logo(); ?>
+    <button class="sport-navbar__mobile-close" type="button" aria-label="მენიუს დახურვა">&times;</button>
+  </div>
+
+  <div class="sport-navbar__mobile-section">
+    <span class="sport-navbar__mobile-title">კატეგორიები</span>
+    <div class="sport-navbar__mobile-grid">
+      <?php foreach ($headerCategories as $headerCategorySlug => [$headerLabel, $headerIcon]): ?>
+        <a href="/sport_blog/category/<?= $headerCategorySlug ?>" class="sport-navbar__main-link"><i class="fas <?= $headerIcon ?>"></i> <?= $headerLabel ?></a>
+      <?php endforeach; ?>
+    </div>
+  </div>
+
+  <div class="sport-navbar__mobile-section">
+    <span class="sport-navbar__mobile-title">სწრაფი ბმულები</span>
+    <div class="sport-navbar__mobile-grid">
+      <?php foreach ($headerQuickLinks as [$headerHref, $headerLabel]): ?>
+        <a href="<?= $headerHref ?>" class="sport-navbar__main-link"><?= $headerLabel ?></a>
+      <?php endforeach; ?>
+    </div>
+  </div>
+
+  <div class="sport-navbar__mobile-auth">
+    <?php if (!$headerIsLoggedIn): ?>
+      <a href="/sport_blog/auth_system/login" class="sport-navbar__auth-button sport-navbar__auth-button--login">შესვლა</a>
+      <a href="/sport_blog/auth_system/register" class="sport-navbar__auth-button sport-navbar__auth-button--register">რეგისტრაცია</a>
+    <?php else: ?>
+      <a href="/sport_blog/views/notifications" class="sport-navbar__auth-button sport-navbar__auth-button--login">შეტყობინებები<?= $headerUnreadCount ? ' (' . $headerUnreadCount . ')' : '' ?></a>
+      <a href="/sport_blog/views/profile" class="sport-navbar__auth-button sport-navbar__auth-button--login">პროფილი</a>
+      <a href="/sport_blog/auth_system/logout" class="sport-navbar__auth-button sport-navbar__auth-button--register">გასვლა</a>
+    <?php endif; ?>
+  </div>
+</div>
 
 <script>
   (() => {
     const hamburger = document.querySelector('.sport-navbar__hamburger-icon');
     const mobileMenu = document.querySelector('.sport-navbar__mobile-menu');
     const closeButton = document.querySelector('.sport-navbar__mobile-close');
+    const navbar = document.querySelector('.sport-navbar');
 
-    if (!hamburger || !mobileMenu) return;
+    if (hamburger && mobileMenu) {
+      const setOpen = (isOpen) => {
+        mobileMenu.classList.toggle('sport-navbar__mobile-menu--active', isOpen);
+        hamburger.setAttribute('aria-expanded', String(isOpen));
+        mobileMenu.setAttribute('aria-hidden', String(!isOpen));
+        document.body.classList.toggle('no-scroll', isOpen);
+      };
 
-    const setOpen = (isOpen) => {
-      mobileMenu.classList.toggle('sport-navbar__mobile-menu--active', isOpen);
-      hamburger.setAttribute('aria-expanded', String(isOpen));
-      mobileMenu.setAttribute('aria-hidden', String(!isOpen));
-      document.body.classList.toggle('no-scroll', isOpen);
-    };
+      hamburger.addEventListener('click', () => setOpen(!mobileMenu.classList.contains('sport-navbar__mobile-menu--active')));
+      closeButton?.addEventListener('click', () => setOpen(false));
+      mobileMenu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
+      document.addEventListener('keydown', (event) => { if (event.key === 'Escape') setOpen(false); });
+    }
 
-    hamburger.addEventListener('click', () => setOpen(!mobileMenu.classList.contains('sport-navbar__mobile-menu--active')));
-    closeButton?.addEventListener('click', () => setOpen(false));
-    mobileMenu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
+    // გადახვევისას header კომპაქტური ხდება
+    if (navbar) {
+      const onScroll = () => navbar.classList.toggle('sport-navbar--scrolled', window.scrollY > 8);
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+
+    // აქტიური კატეგორია ხილულ არეში
+    document.querySelector('.sport-navbar__sports-item--active')?.scrollIntoView({ block: 'nearest', inline: 'center' });
+
+    document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const root = document.documentElement;
+        const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+        root.dataset.theme = next;
+        try { localStorage.setItem('sb-theme', next); } catch (e) {}
+      });
+    });
   })();
 </script>

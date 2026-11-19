@@ -27,7 +27,13 @@ function article_image_url(?string $image, string $directory = 'uploads'): strin
         return $image;
     }
 
-    return '/sport_blog/' . trim($directory, '/') . '/' . ltrim($image, '/');
+    $relative = trim($directory, '/') . '/' . ltrim($image, '/');
+    // ფაილი დისკზე აღარ არსებობს — გატეხილი სურათის ნაცვლად ნაგულისხმევი
+    if (!is_file(__DIR__ . '/../' . $relative)) {
+        return SPORT_BLOG_DEFAULT_IMAGE;
+    }
+
+    return '/sport_blog/' . $relative;
 }
 
 function article_story_image_url(array $article): string

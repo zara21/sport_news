@@ -47,9 +47,9 @@ $quizImage = !empty($quiz['image']) ? '/sport_blog/uploads/' . ltrim($quiz['imag
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?> - Sport Blog</title>
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20260618-3">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20260618-3">
-    <link rel="stylesheet" href="/sport_blog/css/quiz.css?v=20260618-2">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119c">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119c">
+    <link rel="stylesheet" href="/sport_blog/css/quiz.css?v=20261119c">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
 </head>
 <body>

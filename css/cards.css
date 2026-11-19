@@ -8,8 +8,8 @@
 .article-card {
     min-width: 0;
     overflow: hidden;
-    background: var(--sb-surface, #fff);
-    border: 1px solid var(--sb-border, #dfe5ec);
+    background: var(--sb-surface, var(--sb-surface));
+    border: 1px solid var(--sb-border, var(--sb-border));
     border-radius: var(--sb-radius, 8px);
     box-shadow: var(--sb-shadow, 0 8px 20px rgba(16, 24, 40, 0.05));
 }
@@ -23,7 +23,7 @@
 
 .article-card h3 {
     margin: 0;
-    color: var(--sb-heading, #17324d);
+    color: var(--sb-heading, var(--sb-accent-text));
     font-size: 17px;
     line-height: 1.35;
 }
@@ -35,7 +35,7 @@
 
 .article-card p {
     margin: 0;
-    color: var(--sb-text-soft, #647386);
+    color: var(--sb-text-soft, var(--sb-text-soft));
     font-size: 14px;
     line-height: 1.55;
 }
@@ -47,8 +47,8 @@
     gap: 10px;
     margin-top: auto;
     padding: 12px 14px;
-    border-top: 1px solid var(--sb-border, #dfe5ec);
-    color: var(--sb-text-soft, #647386);
+    border-top: 1px solid var(--sb-border, var(--sb-border));
+    color: var(--sb-text-soft, var(--sb-text-soft));
     font-size: 12px;
 }
 
@@ -59,10 +59,10 @@
     justify-content: center;
     min-height: 38px;
     padding: 9px 13px;
-    border: 1px solid var(--sb-border, #dfe5ec);
+    border: 1px solid var(--sb-border, var(--sb-border));
     border-radius: 8px;
-    background: #fff;
-    color: var(--sb-heading, #17324d);
+    background: var(--sb-surface);
+    color: var(--sb-heading, var(--sb-accent-text));
     font-size: 13px;
     font-weight: 850;
     text-decoration: none;

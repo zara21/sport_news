@@ -11,9 +11,11 @@ html {
 
 body {
     margin: 0;
-    padding-top: 82px;
-    background: var(--sb-bg, #eef1f4);
-    color: var(--sb-text, #17212b);
+    padding-top: var(--sb-nav-height);
+    background: var(--sb-bg-glow), var(--sb-bg);
+    background-attachment: fixed;
+    color: var(--sb-text);
+    line-height: 1.55;
 }
 
 body.no-scroll {
@@ -96,14 +98,10 @@ table {
 }
 
 .text-muted {
-    color: var(--sb-text-soft, #647386);
+    color: var(--sb-text-soft, var(--sb-text-soft));
 }
 
 @media (max-width: 760px) {
-    body {
-        padding-top: 68px;
-    }
-
     .container {
         width: min(100% - 24px, 1400px);
     }

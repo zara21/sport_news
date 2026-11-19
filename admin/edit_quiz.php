@@ -219,7 +219,7 @@ if ($questions) {
     }
 }
 
-admin_page_start('ქვიზის რედაქტირება', ['/sport_blog/css/add_article.css']);
+admin_page_start('ქვიზის რედაქტირება', ['/sport_blog/css/add_article.css?v=20261119c']);
 ?>
 
 <section class="admin-editor">

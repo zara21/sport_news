@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/admin_helpers.php';
+require_once __DIR__ . '/brand.php';
 
 function admin_nav_item(string $href, string $icon, string $label): void
 {
@@ -53,17 +54,20 @@ function admin_page_start(string $title, array $extraStyles = []): void
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title><?= $safeTitle ?> | Admin</title>
-        <link rel="stylesheet" href="/sport_blog/css/design-system.css">
-        <link rel="stylesheet" href="/sport_blog/css/admin.css">
+        <script>try{const t=localStorage.getItem("sb-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t;}catch(e){}</script>
+        <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
+        <link rel="stylesheet" href="/sport_blog/css/design-system.css?v=20261119c">
+        <link rel="stylesheet" href="/sport_blog/css/admin.css?v=20261119c">
         <?php foreach ($extraStyles as $href): ?>
             <link rel="stylesheet" href="<?= htmlspecialchars($href, ENT_QUOTES, 'UTF-8') ?>">
         <?php endforeach; ?>
     </head>
     <body class="admin-page">
     <aside class="admin-sidebar">
-        <a class="admin-sidebar__brand" href="/sport_blog/admin/admin.php">
-            <img src="/sport_blog/assets/brand/sportblog-logo.svg" alt="Sport Blog Admin">
-        </a>
+        <div class="admin-sidebar__brand">
+            <?php sb_render_logo('/sport_blog/admin/admin.php'); ?>
+            <span class="admin-sidebar__badge">Admin</span>
+        </div>
 
         <nav class="admin-sidebar__nav" aria-label="ადმინის ნავიგაცია">
             <?php
@@ -102,6 +106,7 @@ function admin_page_start(string $title, array $extraStyles = []): void
                 <h1><?= $safeTitle ?></h1>
             </div>
             <div class="admin-topbar__actions">
+                <?php sb_render_theme_toggle(); ?>
                 <span class="admin-topbar__user"><?= $safeUserName ?></span>
                 <a href="/sport_blog/views/profile" class="admin-button admin-button--neutral">პროფილი</a>
                 <a href="/sport_blog/auth_system/logout" class="admin-button admin-button--danger">გასვლა</a>
@@ -114,6 +119,13 @@ function admin_page_end(): void
 {
     ?>
     </main>
+    <script>
+    document.querySelectorAll("[data-theme-toggle]").forEach((b) => b.addEventListener("click", () => {
+        const r = document.documentElement, next = r.dataset.theme === "light" ? "dark" : "light";
+        r.dataset.theme = next;
+        try { localStorage.setItem("sb-theme", next); } catch (e) {}
+    }));
+    </script>
     </body>
     </html>
     <?php

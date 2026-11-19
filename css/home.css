@@ -12,8 +12,8 @@
 
 .home-band--latest {
     padding: 36px 0 42px;
-    border-block: 1px solid rgba(18, 28, 45, 0.06);
-    background: #f6f8fa;
+    border-block: 1px solid var(--sb-border);
+    background: var(--sb-surface-2);
 }
 
 .home-band--interactive {
@@ -22,8 +22,8 @@
 
 .home-band--videos {
     padding: 42px 0 52px;
-    border-top: 1px solid rgba(18, 28, 45, 0.06);
-    background: #f6f8fa;
+    border-top: 1px solid var(--sb-border);
+    background: var(--sb-surface-2);
 }
 
 .home-hero,
@@ -80,8 +80,8 @@
 }
 
 .home-news-tab.is-active {
-    background: var(--sb-heading);
-    color: #fff;
+    background: var(--sb-ink);
+    color: var(--sb-on-media);
 }
 
 .home-news-list {
@@ -146,8 +146,8 @@
     display: block;
     overflow: hidden;
     border-radius: var(--sb-radius);
-    background: #152234;
-    color: #fff;
+    background: var(--sb-ink);
+    color: var(--sb-on-media);
     text-decoration: none;
 }
 
@@ -198,7 +198,7 @@
 }
 
 .home-feature__category {
-    color: #c8f0b0;
+    color: var(--sb-accent-text);
     font-size: 12px;
     font-weight: 900;
 }
@@ -226,7 +226,7 @@
     padding: 8px 10px;
     border: 1px solid var(--sb-border-strong);
     border-radius: 6px;
-    background: #fff;
+    background: var(--sb-surface);
     color: var(--sb-text);
 }
 
@@ -276,8 +276,8 @@
     position: sticky;
     top: 0;
     z-index: 1;
-    background: var(--sb-heading);
-    color: #fff;
+    background: var(--sb-surface-3);
+    color: var(--sb-on-media);
 }
 
 .home-standings__team-link {
@@ -302,13 +302,13 @@
     width: 28px;
     height: 28px;
     border-radius: 6px;
-    background: #edf2f7;
+    background: var(--sb-surface-2);
     font-weight: 900;
 }
 
-.home-rank.is-ucl { background: #1d4f86; color: #fff; }
-.home-rank.is-europa { background: #9e1c2f; color: #fff; }
-.home-rank.is-relegation { background: #e63946; color: #fff; }
+.home-rank.is-ucl { background: var(--sb-accent); color: var(--sb-on-accent); }
+.home-rank.is-europa { background: var(--sb-red); color: var(--sb-on-media); }
+.home-rank.is-relegation { background: var(--sb-red); color: var(--sb-on-media); }
 
 .home-match-strip {
     padding: 10px 0 4px;
@@ -329,7 +329,7 @@
     padding: 8px 12px;
     border: 1px solid var(--sb-border-strong);
     border-radius: 7px;
-    background: #fff;
+    background: var(--sb-surface);
     color: var(--sb-heading);
     font: inherit;
     font-size: 12px;
@@ -365,7 +365,7 @@
     padding: 0;
     border: 1px solid var(--sb-border);
     border-radius: 6px;
-    background: #fff;
+    background: var(--sb-surface);
     color: var(--sb-heading);
     font-size: 25px;
     cursor: pointer;
@@ -452,7 +452,7 @@
     padding: 9px 13px;
     border: 1px solid var(--sb-border);
     border-radius: 8px;
-    background: #fff;
+    background: var(--sb-surface);
     color: var(--sb-heading);
     box-shadow: var(--sb-shadow);
     font-size: 13px;
@@ -788,8 +788,8 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: rgba(230, 57, 70, 0.92);
-    color: #fff;
+    background: var(--sb-red-soft);
+    color: var(--sb-on-media);
     transform: translate(-50%, -50%);
 }
 
@@ -842,4 +842,380 @@
     .video-card {
         flex-basis: min(86vw, 280px);
     }
+}
+
+/* ==================================================================
+   Redesign 2026 — მუქი სპორტული სტილი (მთავარი გვერდი)
+   ================================================================== */
+.home-band--latest,
+.home-band--videos {
+    border-color: var(--sb-border);
+    background: linear-gradient(180deg, var(--sb-surface) 0%, transparent 100%);
+}
+
+/* სექციების სათაურები ლაიმის აქცენტით */
+.home-strip-heading h2,
+.home-section-heading h2,
+.latest-news-section h2,
+.video-articles h2 {
+    position: relative;
+    padding-left: 16px;
+    color: var(--sb-heading);
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+}
+
+.home-strip-heading h2::before,
+.home-section-heading h2::before,
+.latest-news-section h2::before,
+.video-articles h2::before {
+    position: absolute;
+    top: 0.18em;
+    bottom: 0.18em;
+    left: 0;
+    width: 5px;
+    border-radius: 3px;
+    background: var(--sb-accent);
+    content: "";
+}
+
+.home-section-link,
+.home-match-more {
+    min-height: 36px;
+    padding: 8px 16px;
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius-pill);
+    background: var(--sb-surface-2);
+    box-shadow: none;
+    color: var(--sb-heading);
+    font-size: 13px;
+    font-weight: 800;
+    transition: border-color 0.18s var(--sb-ease), color 0.18s var(--sb-ease), background 0.18s var(--sb-ease);
+}
+
+.home-section-link:hover,
+.home-section-link:focus-visible,
+.home-match-more:hover {
+    border-color: var(--sb-accent);
+    background: var(--sb-accent);
+    color: var(--sb-on-accent);
+}
+
+.home-icon-button {
+    border-radius: var(--sb-radius-pill);
+    background: var(--sb-surface-2);
+    font-size: 20px;
+    transition: border-color 0.18s var(--sb-ease), color 0.18s var(--sb-ease);
+}
+
+.home-icon-button:hover {
+    border-color: var(--sb-accent-border);
+    color: var(--sb-accent-text);
+}
+
+/* Hero */
+.home-hero__grid {
+    gap: 16px;
+}
+
+.home-news-rail,
+.home-standings {
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius-lg);
+    background: var(--sb-surface);
+}
+
+.home-news-tabs {
+    gap: 4px;
+    margin: 10px;
+    padding: 4px;
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius-pill);
+    background: var(--sb-surface-2);
+}
+
+.home-news-tab {
+    border-radius: var(--sb-radius-pill);
+    transition: background 0.18s var(--sb-ease), color 0.18s var(--sb-ease);
+}
+
+.home-news-tab:hover {
+    color: var(--sb-heading);
+}
+
+.home-news-tab.is-active {
+    background: var(--sb-accent);
+    color: var(--sb-on-accent);
+}
+
+.home-news-list__item {
+    border-color: var(--sb-border);
+    border-radius: var(--sb-radius-sm);
+    transition: background 0.18s var(--sb-ease);
+}
+
+.home-news-list__item:hover {
+    background: var(--sb-hover);
+}
+
+.home-news-list__item img {
+    border-radius: var(--sb-radius-sm);
+}
+
+.home-news-list__item span {
+    color: var(--sb-text);
+    font-weight: 700;
+}
+
+.home-feature-grid,
+.home-feature__side {
+    gap: 16px;
+}
+
+.home-feature {
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius-lg);
+    isolation: isolate;
+}
+
+.home-feature img {
+    transition: transform 0.6s var(--sb-ease);
+}
+
+.home-feature:hover img {
+    transform: scale(1.04);
+}
+
+.home-feature__overlay {
+    gap: 10px;
+    padding: 90px 26px 24px;
+    background: linear-gradient(180deg, transparent 0%, rgba(5, 7, 10, 0.55) 35%, rgba(5, 7, 10, 0.95) 100%);
+}
+
+.home-feature__overlay strong {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    line-height: 1.18;
+    text-wrap: balance;
+}
+
+.home-feature--side .home-feature__overlay {
+    padding: 60px 16px 16px;
+}
+
+.home-feature--side .home-feature__overlay strong {
+    font-size: 15px;
+    line-height: 1.3;
+}
+
+.home-feature__category {
+    justify-self: start;
+    padding: 4px 10px;
+    border-radius: var(--sb-radius-pill);
+    background: var(--sb-accent);
+    color: var(--sb-on-accent);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+}
+
+/* ცხრილი */
+.home-standings__header {
+    padding: 14px 14px 10px;
+}
+
+.home-standings__header h2 {
+    font-size: 17px;
+}
+
+.home-standings select {
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius-pill);
+    background-color: var(--sb-surface-2);
+    color: var(--sb-heading);
+}
+
+.home-standings__table th {
+    background: var(--sb-surface-2);
+    color: var(--sb-text-faint);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.home-standings__table td {
+    border-color: var(--sb-border);
+}
+
+.home-standings__table tbody tr {
+    transition: background 0.15s var(--sb-ease);
+}
+
+.home-standings__table tbody tr:hover {
+    background: var(--sb-hover);
+}
+
+.home-standings__team-link:hover {
+    color: var(--sb-accent-text);
+}
+
+.home-rank {
+    border-radius: 6px;
+    background: var(--sb-surface-3);
+    color: var(--sb-text);
+}
+
+.home-rank.is-ucl { background: var(--sb-accent); color: var(--sb-on-accent); }
+.home-rank.is-europa { background: var(--sb-blue); color: #fff; }
+.home-rank.is-relegation { background: var(--sb-red); color: #fff; }
+
+/* მატჩები */
+.home-match-card {
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius);
+    background: var(--sb-surface);
+    transition: border-color 0.18s var(--sb-ease), transform 0.18s var(--sb-ease), background 0.18s var(--sb-ease);
+}
+
+.home-match-card:hover {
+    border-color: var(--sb-accent-border);
+    background: var(--sb-surface-2);
+    transform: translateY(-2px);
+}
+
+.home-match-card__team strong {
+    color: var(--sb-heading);
+}
+
+.home-match-card__team b {
+    color: var(--sb-heading);
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.home-match-card__status.is-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--sb-red-text);
+}
+
+.home-match-card__status.is-live::before {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--sb-red);
+    animation: sb-live-pulse 1.4s ease-in-out infinite;
+    content: "";
+}
+
+@keyframes sb-live-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 59, 79, 0.6); }
+    50% { box-shadow: 0 0 0 5px rgba(255, 59, 79, 0); }
+}
+
+/* ბარათები: სიახლეები, ივენთები, ქვიზები, ვიდეოები */
+.latest-news-card,
+.home-event-card,
+.home-quiz-card,
+.video-card {
+    overflow: hidden;
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius);
+    background: var(--sb-surface);
+    box-shadow: none;
+    transition: border-color 0.2s var(--sb-ease), transform 0.2s var(--sb-ease), box-shadow 0.2s var(--sb-ease);
+}
+
+.latest-news-card:hover,
+.home-event-card:hover,
+.home-quiz-card:hover,
+.video-card:hover {
+    border-color: var(--sb-accent-border);
+    box-shadow: var(--sb-shadow-strong);
+    transform: translateY(-3px);
+}
+
+.latest-news-card__image,
+.video-thumbnail {
+    overflow: hidden;
+}
+
+.latest-news-card__image img,
+.home-event-card > img,
+.home-quiz-card > img,
+.video-thumbnail img {
+    transition: transform 0.5s var(--sb-ease);
+}
+
+.latest-news-card:hover .latest-news-card__image img,
+.home-event-card:hover > img,
+.home-quiz-card:hover > img,
+.video-card:hover .video-thumbnail img {
+    transform: scale(1.05);
+}
+
+.latest-news-card h3,
+.latest-news-card h3 a {
+    color: var(--sb-heading);
+    text-decoration: none;
+}
+
+.latest-news-card__category,
+.home-quiz-card small,
+.home-event-card__action,
+.home-event-card__status {
+    color: var(--sb-accent-text);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.latest-news-card__meta {
+    color: var(--sb-text-faint);
+}
+
+.home-event-card__meta {
+    color: var(--sb-red-text);
+}
+
+.home-interactive__block--quizzes {
+    border-color: var(--sb-border);
+}
+
+.video-play-icon {
+    width: 52px;
+    height: 52px;
+    background: var(--sb-accent);
+    box-shadow: 0 0 0 6px rgba(200, 255, 46, 0.18);
+    color: var(--sb-on-accent);
+    transition: transform 0.2s var(--sb-ease);
+}
+
+.video-card:hover .video-play-icon {
+    transform: translate(-50%, -50%) scale(1.08);
+}
+
+.video-info strong {
+    color: var(--sb-heading);
+}
+
+.video-info small {
+    color: var(--sb-text-faint);
+}
+
+@media (max-width: 1180px) {
+    .home-feature__overlay strong { font-size: 26px; }
+}
+
+@media (max-width: 760px) {
+    .home-strip-heading h2,
+    .home-section-heading h2,
+    .latest-news-section h2,
+    .video-articles h2 { font-size: 20px; }
+
+    .home-feature__overlay strong { font-size: 22px; }
 }

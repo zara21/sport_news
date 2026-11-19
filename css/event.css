@@ -13,7 +13,7 @@
     min-height: 340px;
     overflow: hidden;
     border-radius: 8px;
-    background: #121c2d;
+    background: var(--sb-ink);
 }
 
 .event-hero img {
@@ -31,18 +31,18 @@
     gap: 9px;
     padding: 90px 32px 30px;
     background: linear-gradient(transparent, rgba(9, 18, 30, 0.92));
-    color: #fff;
+    color: var(--sb-on-media);
 }
 
 .event-hero__sport {
-    color: #c8f0b0;
+    color: var(--sb-accent-text);
     font-size: 13px;
     font-weight: 900;
 }
 
 .event-hero h1 {
     margin: 0;
-    color: #fff;
+    color: var(--sb-on-media);
     font-size: 38px;
     line-height: 1.2;
     overflow-wrap: anywhere;
@@ -102,7 +102,7 @@
     aspect-ratio: 16 / 9;
     overflow: hidden;
     border-radius: 8px;
-    background: #0b1320;
+    background: var(--sb-ink);
     box-shadow: var(--sb-shadow-strong);
 }
 
@@ -145,7 +145,7 @@
     border: 1px solid var(--sb-blue);
     border-radius: 8px;
     background: var(--sb-blue);
-    color: #fff;
+    color: var(--sb-on-media);
     font-size: 13px;
     font-weight: 850;
     text-decoration: none;
@@ -153,7 +153,7 @@
 
 .event-button--secondary {
     border-color: var(--sb-border-strong);
-    background: #fff;
+    background: var(--sb-surface);
     color: var(--sb-heading);
 }
 

@@ -5,7 +5,7 @@
 .sport-articles-container {
     width: min(1180px, calc(100% - 40px));
     margin: 0 auto;
-    color: #1d2737;
+    color: var(--sb-heading);
     font-family: "Noto Sans Georgian", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -15,7 +15,7 @@
     justify-content: space-between;
     gap: 18px;
     margin-bottom: 22px;
-    border-bottom: 1px solid rgba(18, 28, 45, 0.1);
+    border-bottom: 1px solid var(--sb-border);
     padding-bottom: 14px;
 }
 
@@ -26,8 +26,8 @@
     margin-bottom: 6px;
     padding: 5px 10px;
     border-radius: 999px;
-    background: rgba(230, 57, 70, 0.1);
-    color: #c92f3b;
+    background: var(--sb-red-soft);
+    color: var(--sb-red-text);
     font-size: 12px;
     font-weight: 700;
 }
@@ -36,7 +36,7 @@
     margin: 0;
     font-size: 44px;
     line-height: 1.1;
-    color: #121c2d;
+    color: var(--sb-heading);
 }
 
 .sport-articles-list {
@@ -46,8 +46,8 @@
 
 .sport-articles-article-card {
     min-width: 0;
-    background-color: #fff;
-    border: 1px solid rgba(18, 28, 45, 0.08);
+    background-color: var(--sb-surface);
+    border: 1px solid var(--sb-border);
     border-radius: 10px;
     display: grid;
     grid-template-columns: 220px minmax(0, 1fr);
@@ -93,7 +93,7 @@
 .sport-articles-article-content h3,
 .sport-articles-featured-content h2 {
     margin: 0 0 8px;
-    color: #121c2d;
+    color: var(--sb-heading);
     line-height: 1.3;
     overflow-wrap: anywhere;
 }
@@ -114,19 +114,19 @@
 
 .sport-articles-article-content a:hover,
 .sport-articles-featured-content a:hover {
-    color: #E63946;
+    color: var(--sb-red-text);
 }
 
 .sport-articles-summary {
     font-size: 14px;
-    color: #5f6b7a;
+    color: var(--sb-text-soft);
     margin: 0 0 12px;
     line-height: 1.6;
 }
 
 .sport-articles-article-footer {
     font-size: 13px;
-    color: #7b8794;
+    color: var(--sb-text-soft);
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -138,9 +138,9 @@
     align-self: flex-start;
     font-size: 13px;
     padding: 8px 14px;
-    background-color: #121c2d;
-    color: #fff !important;
-    -webkit-text-fill-color: #fff;
+    background-color: var(--sb-ink);
+    color: var(--sb-on-media) !important;
+    -webkit-text-fill-color: var(--sb-on-media);
     border-radius: 7px;
     font-weight: 700;
     text-decoration: none;
@@ -148,22 +148,22 @@
 }
 
 .sport-articles-read-more-btn:visited {
-    color: #fff !important;
-    -webkit-text-fill-color: #fff;
+    color: var(--sb-on-media) !important;
+    -webkit-text-fill-color: var(--sb-on-media);
 }
 
 .sport-articles-read-more-btn:hover,
 .sport-articles-read-more-btn:focus-visible {
-    background-color: #E63946;
-    color: #fff !important;
-    -webkit-text-fill-color: #fff;
+    background-color: var(--sb-red);
+    color: var(--sb-on-media) !important;
+    -webkit-text-fill-color: var(--sb-on-media);
 }
 
 .sport-articles-featured-article {
     grid-template-columns: minmax(300px, 48%) minmax(0, 1fr);
     min-height: 320px;
     margin-bottom: 22px;
-    border-left: 6px solid #E63946;
+    border-left: 6px solid var(--sb-red);
 }
 
 .sport-articles-featured-image {
@@ -184,9 +184,9 @@
     justify-content: center;
     min-width: 42px;
     padding: 9px 18px;
-    background-color: #fff;
-    color: #121c2d;
-    border: 1px solid rgba(18, 28, 45, 0.12);
+    background-color: var(--sb-surface);
+    color: var(--sb-heading);
+    border: 1px solid var(--sb-border);
     border-radius: 8px;
     font-size: 14px;
     font-weight: 700;
@@ -196,8 +196,8 @@
 
 .sport-articles-pagination-btn:hover,
 .sport-articles-pagination-btn--active {
-    color: #fff;
-    background-color: #121c2d;
+    color: var(--sb-on-media);
+    background-color: var(--sb-ink);
 }
 
 @media (max-width: 768px) {
@@ -239,10 +239,10 @@
 
 .sport-articles-empty {
     padding: 28px;
-    background: #fff;
-    border: 1px solid rgba(18, 28, 45, 0.08);
+    background: var(--sb-surface);
+    border: 1px solid var(--sb-border);
     border-radius: 10px;
-    color: #5f6b7a;
+    color: var(--sb-text-soft);
 }
 
 .quiz-filters {
@@ -259,10 +259,10 @@
     gap: 8px;
     min-height: 44px;
     padding: 10px 16px;
-    border: 1px solid #153b65;
+    border: 1px solid var(--sb-accent);
     border-radius: 8px;
-    background: #153b65;
-    color: #fff;
+    background: var(--sb-accent);
+    color: var(--sb-on-accent);
     font: inherit;
     font-weight: 800;
     cursor: pointer;
@@ -273,10 +273,10 @@
     width: 100%;
     min-width: 0;
     padding: 12px 14px;
-    border: 1px solid rgba(18, 28, 45, 0.14);
+    border: 1px solid var(--sb-border);
     border-radius: 8px;
-    background: #fff;
-    color: #121c2d;
+    background: var(--sb-surface);
+    color: var(--sb-heading);
     font: inherit;
 }
 
@@ -289,12 +289,12 @@
 .quiz-card {
     min-width: 0;
     overflow: hidden;
-    background: #fff;
-    border: 1px solid rgba(18, 28, 45, 0.08);
+    background: var(--sb-surface);
+    border: 1px solid var(--sb-border);
     border-radius: 10px;
     box-shadow: 0 8px 20px rgba(18, 28, 45, 0.08);
     text-decoration: none;
-    color: #121c2d;
+    color: var(--sb-heading);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -323,7 +323,7 @@
 }
 
 .quiz-type {
-    color: #697386;
+    color: var(--sb-text-soft);
     font-size: 13px;
 }
 
@@ -344,4 +344,197 @@
     .quiz-container {
         grid-template-columns: 1fr;
     }
+}
+
+/* ==================================================================
+   Redesign 2026 — კატეგორია / სტატიების სია / ქვიზების სია
+   ================================================================== */
+.sport-articles-container {
+    width: min(1240px, calc(100% - 40px));
+    color: var(--sb-text);
+    font-family: var(--sb-font-sans);
+}
+
+.sport-articles-heading {
+    position: relative;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+    margin-bottom: 26px;
+    padding: 28px 28px 26px;
+    overflow: hidden;
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius-lg);
+    background:
+        radial-gradient(600px 220px at 100% 0%, rgba(200, 255, 46, 0.14), transparent 70%),
+        var(--sb-surface);
+}
+
+.sport-articles-heading::after {
+    position: absolute;
+    right: 28px;
+    bottom: 0;
+    left: 28px;
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+    background: linear-gradient(90deg, var(--sb-accent), transparent 60%);
+    content: "";
+}
+
+.sport-articles-heading p {
+    margin: 0;
+    color: var(--sb-text-soft);
+}
+
+.sport-articles-kicker {
+    margin: 0;
+    padding: 4px 11px;
+    border: 1px solid var(--sb-accent-border);
+    background: var(--sb-accent-soft);
+    color: var(--sb-accent-text);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.sport-articles-heading h1 {
+    font-size: 50px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+}
+
+.sport-articles-list {
+    gap: 14px;
+}
+
+.sport-articles-article-card {
+    border-radius: var(--sb-radius-lg);
+    box-shadow: none;
+    transition: border-color 0.2s var(--sb-ease), transform 0.2s var(--sb-ease), background 0.2s var(--sb-ease);
+}
+
+.sport-articles-article-card:hover {
+    border-color: var(--sb-accent-border);
+    background: var(--sb-surface-2);
+    box-shadow: none;
+}
+
+.sport-articles-image-link {
+    border-radius: var(--sb-radius);
+}
+
+.sport-articles-image-link img {
+    transition: transform 0.5s var(--sb-ease);
+}
+
+.sport-articles-article-card:hover .sport-articles-image-link img {
+    transform: scale(1.05);
+}
+
+.sport-articles-featured-article {
+    border-left: 1px solid var(--sb-border);
+    background:
+        linear-gradient(90deg, var(--sb-accent-soft), transparent 40%),
+        var(--sb-surface);
+}
+
+.sport-articles-featured-content h2 {
+    font-weight: 900;
+    letter-spacing: -0.01em;
+}
+
+.sport-articles-featured-content a,
+.sport-articles-article-content h3 a {
+    color: var(--sb-heading);
+}
+
+.sport-articles-featured-content a:hover,
+.sport-articles-article-content h3 a:hover {
+    color: var(--sb-accent-text);
+}
+
+.sport-articles-summary {
+    color: var(--sb-text-soft);
+}
+
+.sport-articles-article-footer {
+    color: var(--sb-text-faint);
+}
+
+.sport-articles-read-more-btn,
+.sport-articles-read-more-btn:visited {
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius-pill);
+    background: var(--sb-surface-2);
+    color: var(--sb-heading);
+}
+
+.sport-articles-read-more-btn:hover {
+    border-color: var(--sb-accent);
+    background: var(--sb-accent);
+    color: var(--sb-on-accent);
+}
+
+.sport-articles-pagination-btn {
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius-pill);
+    background: var(--sb-surface);
+    color: var(--sb-heading);
+}
+
+.sport-articles-pagination-btn:hover {
+    border-color: var(--sb-accent-border);
+}
+
+.sport-articles-pagination-btn--active {
+    border-color: var(--sb-accent);
+    background: var(--sb-accent);
+    color: var(--sb-on-accent);
+}
+
+.sport-articles-empty {
+    border: 1px dashed var(--sb-border-strong);
+    border-radius: var(--sb-radius-lg);
+    background: var(--sb-surface);
+    color: var(--sb-text-soft);
+}
+
+.quiz-filter-button {
+    border-radius: var(--sb-radius-pill);
+}
+
+.quiz-card {
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius-lg);
+    background: var(--sb-surface);
+    transition: border-color 0.2s var(--sb-ease), transform 0.2s var(--sb-ease);
+}
+
+.quiz-card:hover {
+    border-color: var(--sb-accent-border);
+    transform: translateY(-3px);
+}
+
+.quiz-card-content h3 {
+    color: var(--sb-heading);
+}
+
+.quiz-type {
+    color: var(--sb-accent-text);
+}
+
+@media (max-width: 760px) {
+    .sport-articles-container {
+        width: calc(100% - 24px);
+    }
+
+    .sport-articles-heading {
+        padding: 22px 18px 20px;
+    }
+}
+
+@media (max-width: 760px) {
+    .sport-articles-heading h1 { font-size: 34px; }
 }

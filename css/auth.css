@@ -6,7 +6,7 @@
 
 .auth-page__title {
     margin: 0 0 18px;
-    color: #121c2d;
+    color: var(--sb-heading);
     font-size: 40px;
     line-height: 1.1;
     text-align: center;
@@ -14,8 +14,8 @@
 
 .login-form-card,
 .registration-form-card {
-    background: #fff;
-    border: 1px solid rgba(18, 28, 45, 0.08);
+    background: var(--sb-surface);
+    border: 1px solid var(--sb-border);
     border-radius: 10px;
     box-shadow: 0 12px 30px rgba(18, 28, 45, 0.1);
     padding: 22px;
@@ -35,7 +35,7 @@
 
 .login-form__label,
 .registration-form__label {
-    color: #253044;
+    color: var(--sb-text);
     font-size: 14px;
     font-weight: 700;
 }
@@ -45,16 +45,16 @@
     width: 100%;
     min-width: 0;
     padding: 12px 13px;
-    border: 1px solid rgba(18, 28, 45, 0.16);
+    border: 1px solid var(--sb-border);
     border-radius: 8px;
-    background: #fff;
-    color: #121c2d;
+    background: var(--sb-surface);
+    color: var(--sb-heading);
     font: inherit;
 }
 
 .login-form__input:focus,
 .registration-form__input:focus {
-    border-color: #E63946;
+    border-color: var(--sb-red);
     box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.12);
     outline: none;
 }
@@ -65,8 +65,8 @@
     padding: 12px 18px;
     border: 0;
     border-radius: 8px;
-    background: #E63946;
-    color: #fff;
+    background: var(--sb-red);
+    color: var(--sb-on-media);
     cursor: pointer;
     font: inherit;
     font-weight: 800;
@@ -74,20 +74,20 @@
 
 .login-form__submit-btn:hover,
 .registration-form__submit-btn:hover {
-    background: #c92f3b;
+    background: var(--sb-red);
 }
 
 .login-form__register-link,
 .registration-form__login-link {
     margin: 0;
-    color: #697386;
+    color: var(--sb-text-soft);
     text-align: center;
     font-size: 14px;
 }
 
 .login-form__register-link a,
 .registration-form__login-link a {
-    color: #E63946;
+    color: var(--sb-red-text);
     font-weight: 700;
     text-decoration: none;
 }
@@ -101,13 +101,13 @@
 }
 
 .auth-form__error-message {
-    background: rgba(230, 57, 70, 0.1);
-    color: #a3202b;
+    background: var(--sb-red-soft);
+    color: var(--sb-red-text);
 }
 
 .auth-form__success-message {
-    background: rgba(46, 204, 113, 0.12);
-    color: #176b3a;
+    background: var(--sb-accent-soft);
+    color: var(--sb-accent-text);
 }
 
 @media (max-width: 520px) {
@@ -119,4 +119,107 @@
     .registration-form-card {
         padding: 18px;
     }
+}
+
+/* ==================================================================
+   Redesign 2026 — შესვლა / რეგისტრაცია
+   ================================================================== */
+.auth-page {
+    width: min(480px, calc(100% - 32px));
+    padding: 48px 0 24px;
+}
+
+.auth-page__title {
+    font-size: 38px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+}
+
+.login-form-card,
+.registration-form-card {
+    position: relative;
+    overflow: hidden;
+    padding: 28px;
+    border-radius: var(--sb-radius-lg);
+    background:
+        radial-gradient(420px 160px at 100% 0%, rgba(200, 255, 46, 0.1), transparent 70%),
+        var(--sb-surface);
+    box-shadow: var(--sb-shadow-strong);
+}
+
+.login-form-card::before,
+.registration-form-card::before {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: linear-gradient(90deg, var(--sb-accent), transparent 70%);
+    content: "";
+}
+
+.login-form__label,
+.registration-form__label {
+    color: var(--sb-text-soft);
+    font-size: 13px;
+}
+
+.login-form__input,
+.registration-form__input {
+    min-height: 48px;
+    border-radius: var(--sb-radius);
+    background: var(--sb-surface-2);
+    color: var(--sb-heading);
+}
+
+.login-form__input:focus,
+.registration-form__input:focus {
+    border-color: var(--sb-accent-border);
+    box-shadow: var(--sb-ring);
+}
+
+.login-form__submit-btn,
+.registration-form__submit-btn {
+    min-height: 50px;
+    border: 0;
+    border-radius: var(--sb-radius-pill);
+    background: var(--sb-accent);
+    color: var(--sb-on-accent);
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: background 0.18s var(--sb-ease), transform 0.18s var(--sb-ease);
+}
+
+.login-form__submit-btn:hover,
+.registration-form__submit-btn:hover {
+    background: var(--sb-accent-hover);
+    transform: translateY(-1px);
+}
+
+.login-form__register-link,
+.registration-form__login-link {
+    color: var(--sb-text-soft);
+}
+
+.login-form__register-link a,
+.registration-form__login-link a {
+    color: var(--sb-accent-text);
+    font-weight: 800;
+}
+
+.auth-form__error-message {
+    border: 1px solid var(--sb-red-border);
+    border-radius: var(--sb-radius);
+    background: var(--sb-red-soft);
+    color: var(--sb-red-text);
+}
+
+.auth-form__success-message {
+    border: 1px solid var(--sb-accent-border);
+    border-radius: var(--sb-radius);
+    background: var(--sb-accent-soft);
+    color: var(--sb-accent-text);
+}
+
+@media (max-width: 760px) {
+    .auth-page__title { font-size: 30px; }
 }

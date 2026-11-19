@@ -63,9 +63,9 @@ $articles = $articles_stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <link rel="stylesheet" href="/sport_blog/assets/vendor/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="/sport_blog/css/styles.css">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css">
-    <link rel="stylesheet" href="/sport_blog/css/category.css?v=20260618-3">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119c">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119c">
+    <link rel="stylesheet" href="/sport_blog/css/category.css?v=20261119c">
 </head>
 <body class="sport-body">
 <?php require_once __DIR__ . '/../includes/header.php'; ?>

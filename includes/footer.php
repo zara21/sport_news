@@ -1,14 +1,15 @@
+<?php require_once __DIR__ . '/brand.php'; ?>
 <footer class="site-footer">
   <div class="site-footer__main">
     <div class="site-footer__content-wrapper">
       <div class="site-footer__brand-section">
-        <img src="/sport_blog/assets/brand/sportblog-logo.svg" alt="Sport Blog" class="site-footer__logo" width="140" height="44" loading="lazy">
+        <?php sb_render_logo(); ?>
         <p class="site-footer__description">
-          თქვენი წყარო სპორტის უახლესი სიახლეებისთვის, სტატისტიკისთვის და ექსკლუზიური კონტენტისთვის.
+          სპორტის უახლესი სიახლეები, მატჩები, ცხრილები, ვიდეოები და ქვიზები — ერთ სივრცეში.
         </p>
       </div>
 
-      <div class="site-footer__nav-section">
+      <nav class="site-footer__nav-section" aria-label="კატეგორიები">
         <h4 class="site-footer__nav-title">კატეგორიები</h4>
         <ul class="site-footer__nav-list">
           <li class="site-footer__nav-item"><a href="/sport_blog/category/football" class="site-footer__nav-link">ფეხბურთი</a></li>
@@ -18,40 +19,36 @@
           <li class="site-footer__nav-item"><a href="/sport_blog/category/mma" class="site-footer__nav-link">MMA</a></li>
           <li class="site-footer__nav-item"><a href="/sport_blog/category/rugby" class="site-footer__nav-link">რაგბი</a></li>
         </ul>
-      </div>
+      </nav>
 
-      <div class="site-footer__nav-section">
+      <nav class="site-footer__nav-section" aria-label="სწრაფი ბმულები">
         <h4 class="site-footer__nav-title">სწრაფი ბმულები</h4>
         <ul class="site-footer__nav-list">
+          <li class="site-footer__nav-item"><a href="/sport_blog/views/articles" class="site-footer__nav-link">ყველა სტატია</a></li>
           <li class="site-footer__nav-item"><a href="/sport_blog/views/all_quizzes" class="site-footer__nav-link">ქვიზები</a></li>
           <li class="site-footer__nav-item"><a href="/sport_blog/#video-news" class="site-footer__nav-link">ვიდეოები</a></li>
           <li class="site-footer__nav-item"><a href="/sport_blog/#standings" class="site-footer__nav-link">ცხრილები</a></li>
-          <li class="site-footer__nav-item"><a href="/sport_blog/views/articles.php" class="site-footer__nav-link">ყველა სტატია</a></li>
         </ul>
-      </div>
+      </nav>
 
-      <div class="site-footer__social-section">
-        <h4 class="site-footer__social-title">გამოგვყევით</h4>
-        <ul class="site-footer__social-list">
-          <li class="site-footer__social-item"><a href="#" class="site-footer__social-link" aria-label="Facebook"><i class="fab fa-facebook-f site-footer__social-icon"></i></a></li>
-          <li class="site-footer__social-item"><a href="#" class="site-footer__social-link" aria-label="Instagram"><i class="fab fa-instagram site-footer__social-icon"></i></a></li>
-          <li class="site-footer__social-item"><a href="#" class="site-footer__social-link" aria-label="Twitter"><i class="fab fa-twitter site-footer__social-icon"></i></a></li>
-          <li class="site-footer__social-item"><a href="#" class="site-footer__social-link" aria-label="YouTube"><i class="fab fa-youtube site-footer__social-icon"></i></a></li>
+      <nav class="site-footer__nav-section" aria-label="ანგარიში">
+        <h4 class="site-footer__nav-title">ანგარიში</h4>
+        <ul class="site-footer__nav-list">
+          <?php if (!empty($_SESSION['user_id'])): ?>
+            <li class="site-footer__nav-item"><a href="/sport_blog/views/profile" class="site-footer__nav-link">პროფილი</a></li>
+            <li class="site-footer__nav-item"><a href="/sport_blog/views/library" class="site-footer__nav-link">ჩემი ბიბლიოთეკა</a></li>
+            <li class="site-footer__nav-item"><a href="/sport_blog/views/notifications" class="site-footer__nav-link">შეტყობინებები</a></li>
+          <?php else: ?>
+            <li class="site-footer__nav-item"><a href="/sport_blog/auth_system/login" class="site-footer__nav-link">შესვლა</a></li>
+            <li class="site-footer__nav-item"><a href="/sport_blog/auth_system/register" class="site-footer__nav-link">რეგისტრაცია</a></li>
+          <?php endif; ?>
         </ul>
-      </div>
-
-      <div class="site-footer__newsletter-section">
-        <h4 class="site-footer__newsletter-title">გამოიწერეთ სიახლეები</h4>
-        <p class="site-footer__newsletter-text">მიიღეთ უახლესი ამბები და განახლებები პირდაპირ ელფოსტაზე.</p>
-        <form action="#" method="post" class="site-footer__newsletter-form">
-          <input type="email" name="email" placeholder="თქვენი ელფოსტა" required class="site-footer__newsletter-input">
-          <button type="submit" class="site-footer__newsletter-submit-btn">გამოწერა</button>
-        </form>
-      </div>
+      </nav>
     </div>
   </div>
 
   <div class="site-footer__copyright">
-    &copy; <?= date('Y') ?> SportBlog. ყველა უფლება დაცულია.
+    <span>&copy; <?= date('Y') ?> SportBlog. ყველა უფლება დაცულია.</span>
+    <a href="#" class="site-footer__top" onclick="window.scrollTo({top:0});return false;">ზემოთ <i class="fas fa-arrow-up"></i></a>
   </div>
 </footer>
