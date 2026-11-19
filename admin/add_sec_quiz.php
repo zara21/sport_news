@@ -8,16 +8,12 @@ require_once '../includes/header.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf_token($_POST['csrf_token'] ?? null);
     $title = $_POST['title'];
-    $slug = $_POST['slug'];
+    $slug = unique_slug($pdo, 'quiz_games', safe_slug(trim((string) ($_POST['slug'] ?? '')) ?: (string) $title, 'quiz'));
     $stat_type = $_POST['stat_type'];
     $duration = (int)$_POST['duration'];
 
-    $img_name = '';
-    if (!empty($_FILES['image']['name'])) {
-        $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-        $img_name = uniqid() . '.' . $ext;
-        move_uploaded_file($_FILES['image']['tmp_name'], '../uploads/' . $img_name);
-    }
+    // ფაილის ტიპის შემოწმება, ზომის ლიმიტი და hash-ით დედუპლიკაცია
+    $img_name = upload_media_file('image', __DIR__ . '/../uploads', ['image/jpeg', 'image/png', 'image/webp'], 5 * 1024 * 1024) ?? '';
 
     $stmt = $pdo->prepare("INSERT INTO quiz_games (title, slug, image, stat_type, duration_minutes) VALUES (?, ?, ?, ?, ?)");
     $stmt->execute([$title, $slug, $img_name, $stat_type, $duration]);

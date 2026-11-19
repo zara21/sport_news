@@ -97,6 +97,15 @@ function verify_csrf_token(?string $token): void
 
 function safe_slug(string $value, string $fallback = 'item'): string
 {
+    // ქართული ასოების ლათინური ტრანსლიტერაცია (ეროვნული სისტემა), რომ ქართული სათაურიდანაც შეიქმნას slug
+    static $georgian = [
+        'ა' => 'a', 'ბ' => 'b', 'გ' => 'g', 'დ' => 'd', 'ე' => 'e', 'ვ' => 'v', 'ზ' => 'z', 'თ' => 't',
+        'ი' => 'i', 'კ' => 'k', 'ლ' => 'l', 'მ' => 'm', 'ნ' => 'n', 'ო' => 'o', 'პ' => 'p', 'ჟ' => 'zh',
+        'რ' => 'r', 'ს' => 's', 'ტ' => 't', 'უ' => 'u', 'ფ' => 'p', 'ქ' => 'k', 'ღ' => 'gh', 'ყ' => 'q',
+        'შ' => 'sh', 'ჩ' => 'ch', 'ც' => 'ts', 'ძ' => 'dz', 'წ' => 'ts', 'ჭ' => 'ch', 'ხ' => 'kh', 'ჯ' => 'j',
+        'ჰ' => 'h',
+    ];
+    $value = strtr($value, $georgian);
     $slug = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value);
     $slug = strtolower((string)$slug);
     $slug = trim(preg_replace('/[^a-z0-9-]+/', '-', $slug), '-');
@@ -179,9 +188,16 @@ function upload_media_file(string $field, string $targetDir, array $allowedMimes
         'video/mp4' => 'mp4',
         'video/webm' => 'webm',
     ];
-    $extension = $extensions[$mime] ?? (pathinfo($file['name'], PATHINFO_EXTENSION) ?: 'bin');
-    $filename = date('YmdHis') . '_' . bin2hex(random_bytes(8)) . '.' . $extension;
+    // გაფართოება მხოლოდ შემოწმებული MIME ტიპიდან (მომხმარებლის ფაილის სახელს არ ვენდობით)
+    $extension = $extensions[$mime] ?? 'bin';
+
+    // სახელი = შიგთავსის hash: ერთი და იგივე ფაილის ხელახლა ატვირთვა ახალ ასლს აღარ ქმნის
+    $filename = substr(hash_file('sha256', $file['tmp_name']), 0, 32) . '.' . $extension;
     $destination = rtrim($targetDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
+
+    if (is_file($destination)) {
+        return $filename;
+    }
 
     if (!move_uploaded_file($file['tmp_name'], $destination)) {
         throw new RuntimeException('ფაილის შენახვა ვერ მოხერხდა.');
@@ -190,6 +206,41 @@ function upload_media_file(string $field, string $targetDir, array $allowedMimes
     optimize_uploaded_image($destination, $mime);
 
     return $filename;
+}
+
+/**
+ * ამოწმებს, მიუთითებს თუ არა ბაზაში რომელიმე ჩანაწერი ფაილზე.
+ * ფაილები hash-ით ინახება და შეიძლება რამდენიმე ჩანაწერს ჰქონდეს საერთო,
+ * ამიტომ წაშლამდე ეს შემოწმება აუცილებელია.
+ */
+function media_is_referenced(PDO $pdo, string $filename): bool
+{
+    $filename = basename($filename);
+    if ($filename === '') {
+        return false;
+    }
+
+    $columns = [
+        ['articles', 'image'], ['articles', 'second_image'], ['articles', 'story_image'], ['articles', 'video'],
+        ['users', 'profile_image'], ['quizzes', 'quiz_image'], ['questions', 'quiz_image'],
+        ['quiz_games', 'image'], ['sports_events', 'event_image'],
+    ];
+    $like = '%' . addcslashes($filename, '%_\\');
+
+    foreach ($columns as [$table, $column]) {
+        try {
+            $stmt = $pdo->prepare("SELECT 1 FROM `{$table}` WHERE `{$column}` = ? OR `{$column}` LIKE ? LIMIT 1");
+            $stmt->execute([$filename, $like]);
+            if ($stmt->fetchColumn()) {
+                return true;
+            }
+        } catch (PDOException $e) {
+            // ცხრილი/სვეტი არ არსებობს — უსაფრთხოებისთვის ვთვლით, რომ გამოიყენება
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function optimize_uploaded_image(string $path, string $mime, int $maxWidth = 1800, int $quality = 82): void
@@ -259,9 +310,17 @@ function delete_local_media(?string $filename, string $dir): void
 
     $path = realpath(rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename);
     $base = realpath($dir);
-    if ($path && $base && strpos($path, $base) === 0 && is_file($path)) {
-        unlink($path);
+    if (!$path || !$base || !str_starts_with($path, $base . DIRECTORY_SEPARATOR) || !is_file($path)) {
+        return;
     }
+
+    // ფაილი შეიძლება სხვა ჩანაწერსაც ეკუთვნოდეს (hash-ით დედუპლიკაცია) — მაშინ არ ვშლით
+    global $pdo;
+    if ($pdo instanceof PDO && media_is_referenced($pdo, basename($path))) {
+        return;
+    }
+
+    unlink($path);
 }
 
 function sanitize_article_html(string $html): string

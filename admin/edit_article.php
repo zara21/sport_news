@@ -35,6 +35,8 @@ $tagNames = $tagStmt->fetchAll(PDO::FETCH_COLUMN);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf_token($_POST['csrf_token'] ?? null);
+    $newUploads = [];
+    $replacedMedia = [];
 
     try {
         $title = trim((string)($_POST['title'] ?? ''));
@@ -45,6 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $scheduledAt = !empty($_POST['scheduled_at']) ? str_replace('T',' ',(string)$_POST['scheduled_at']).':00' : null;
         if ($scheduledAt && strtotime($scheduledAt) > time()) $status = 'draft';
         $type = $_POST['type'] ?? ($article['type'] ?? 'news');
+        if (!in_array($status, ['published', 'draft'], true)) $status = 'draft';
+        if (!in_array($type, ['news', 'opinion', 'analysis', 'live', 'video'], true)) $type = 'news';
         $popular = isset($_POST['popular']) ? 1 : 0;
         $hasVideo = isset($_POST['has_video']) ? 1 : 0;
         $showInStory = isset($_POST['show_in_story']) ? 1 : 0;
@@ -63,38 +67,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $slugInput = trim((string)($_POST['slug'] ?? ''));
         $slug = unique_slug($pdo, 'articles', safe_slug($slugInput !== '' ? $slugInput : $title, 'article-' . $articleId), $articleId);
 
+        // ახალი ფაილები შეცდომისას იშლება; ძველი ფაილები იშლება მხოლოდ წარმატებული შენახვის შემდეგ.
+        $uploadsDir = __DIR__ . '/../uploads';
         $image = $article['image'];
-        $newImage = upload_media_file('image', __DIR__ . '/../uploads', $imageMimes, 5 * 1024 * 1024);
-        if ($newImage) {
-            delete_local_media($image, __DIR__ . '/../uploads');
-            $image = $newImage;
-        }
-
         $secondImage = $article['second_image'];
-        $newSecondImage = upload_media_file('second_image', __DIR__ . '/../uploads/second_images', $imageMimes, 5 * 1024 * 1024);
-        if ($newSecondImage) {
-            delete_local_media($secondImage, __DIR__ . '/../uploads/second_images');
-            $secondImage = $newSecondImage;
-        }
-
         $storyImage = $article['story_image'];
-        $newStoryImage = upload_media_file('story_image', __DIR__ . '/../uploads/story_images', $imageMimes, 5 * 1024 * 1024);
-        if ($newStoryImage) {
-            delete_local_media($storyImage, __DIR__ . '/../uploads/story_images');
-            $storyImage = $newStoryImage;
-        }
-
         $video = $hasVideo ? $article['video'] : null;
         if (!$hasVideo && !empty($article['video'])) {
-            delete_local_media($article['video'], __DIR__ . '/../uploads/videos');
+            $replacedMedia[] = [$article['video'], $uploadsDir . '/videos'];
         }
 
-        $newVideo = $hasVideo ? upload_media_file('video', __DIR__ . '/../uploads/videos', $videoMimes, 80 * 1024 * 1024) : null;
-        if ($newVideo) {
-            delete_local_media($video, __DIR__ . '/../uploads/videos');
+        if ($newImage = upload_media_file('image', $uploadsDir, $imageMimes, 5 * 1024 * 1024)) {
+            $newUploads[] = [$newImage, $uploadsDir];
+            $replacedMedia[] = [$image, $uploadsDir];
+            $image = $newImage;
+        }
+        if ($newSecondImage = upload_media_file('second_image', $uploadsDir . '/second_images', $imageMimes, 5 * 1024 * 1024)) {
+            $newUploads[] = [$newSecondImage, $uploadsDir . '/second_images'];
+            $replacedMedia[] = [$secondImage, $uploadsDir . '/second_images'];
+            $secondImage = $newSecondImage;
+        }
+        if ($newStoryImage = upload_media_file('story_image', $uploadsDir . '/story_images', $imageMimes, 5 * 1024 * 1024)) {
+            $newUploads[] = [$newStoryImage, $uploadsDir . '/story_images'];
+            $replacedMedia[] = [$storyImage, $uploadsDir . '/story_images'];
+            $storyImage = $newStoryImage;
+        }
+        if ($hasVideo && ($newVideo = upload_media_file('video', $uploadsDir . '/videos', $videoMimes, 80 * 1024 * 1024))) {
+            $newUploads[] = [$newVideo, $uploadsDir . '/videos'];
+            $replacedMedia[] = [$video, $uploadsDir . '/videos'];
             $video = $newVideo;
         }
 
+        $pdo->beginTransaction();
         $update = $pdo->prepare('
             UPDATE articles
             SET title = ?, content = ?, category = ?, subcategory = ?, summary = ?, slug = ?,
@@ -143,10 +147,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ->execute(['ახალი სტატია', $title, site_path('/news/' . rawurlencode($slug))]);
         }
 
+        $pdo->commit();
+        foreach ($replacedMedia as [$oldFile, $oldDir]) {
+            delete_local_media($oldFile, $oldDir);
+        }
+
         $_SESSION['success_message'] = 'სტატია წარმატებით განახლდა.';
-        header('Location: ../news/' . rawurlencode($slug));
+        header('Location: ' . ($status === 'published' ? '../news/' . rawurlencode($slug) : 'preview_article.php?id=' . $articleId));
         exit;
     } catch (Throwable $e) {
+        if ($pdo->inTransaction()) $pdo->rollBack();
+        foreach ($newUploads as [$newFile, $newDir]) {
+            delete_local_media($newFile, $newDir);
+        }
         $_SESSION['error_message'] = $e->getMessage();
         header('Location: edit_article.php?id=' . $articleId);
         exit;
@@ -173,7 +186,7 @@ $types = [
 ];
 
 admin_page_start('სტატიის რედაქტირება', [
-    '/sport_blog/css/add_article.css',
+    '/sport_blog/css/add_article.css?v=20261119c',
     'https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css',
 ]);
 ?>

@@ -8,6 +8,10 @@ if ($configuredBasePath === '/') {
 
 define('SPORT_BLOG_BASE_PATH', $configuredBasePath);
 
+// საიტის დროის სარტყელი. db_connect.php MySQL-ის სესიასაც იგივე offset-ზე აყენებს,
+// რომ დაგეგმილი სტატიების შემოწმება (PHP) და გამოქვეყნება (MySQL NOW()) ერთ დროზე მუშაობდეს.
+date_default_timezone_set(getenv('SPORT_BLOG_TIMEZONE') ?: 'Asia/Tbilisi');
+
 function site_path(string $path = '/'): string
 {
     $path = '/' . ltrim($path, '/');

@@ -36,13 +36,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $slug = unique_slug($pdo, 'quiz_games', safe_slug(trim($_POST['slug'] ?? '') ?: $title, 'quiz-' . $quizGameId), $quizGameId);
             $image = $quizGame['image'];
             $newImage = upload_media_file('image', __DIR__ . '/../uploads', ['image/jpeg', 'image/png', 'image/webp'], 5 * 1024 * 1024);
+            $oldImage = $image;
             if ($newImage) {
-                delete_local_media($image, __DIR__ . '/../uploads');
                 $image = $newImage;
             }
 
             $update = $pdo->prepare('UPDATE quiz_games SET title = ?, slug = ?, image = ?, stat_type = ?, duration_minutes = ? WHERE id = ?');
             $update->execute([$title, $slug, $image, $statType, $duration, $quizGameId]);
+            // ძველი სურათი იშლება მხოლოდ ბაზის წარმატებით განახლების შემდეგ
+            if ($newImage && $oldImage !== $newImage) {
+                delete_local_media($oldImage, __DIR__ . '/../uploads');
+            }
             $quizGame = array_merge($quizGame, compact('title', 'slug', 'image'), ['stat_type' => $statType, 'duration_minutes' => $duration]);
             $successMessage = 'ქვიზის ძირითადი ინფორმაცია განახლდა.';
         }

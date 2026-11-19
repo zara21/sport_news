@@ -12,6 +12,7 @@ storage/cache/*
 # მომხმარებლების და ადმინის მიერ ატვირთული ფაილები
 uploads/*
 !uploads/defaults/
+!uploads/.htaccess
 
 # Composer
 auth_system/vendor/

@@ -31,13 +31,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $imagePath = $event['event_image'];
         $newImage = upload_media_file('event_image', __DIR__ . '/../uploads/ufc_f1', ['image/jpeg', 'image/png', 'image/webp'], 5 * 1024 * 1024);
+        $oldImagePath = (string) $imagePath;
         if ($newImage) {
-            if (str_starts_with((string) $imagePath, 'ufc_f1/')) delete_local_media(substr($imagePath, 7), __DIR__ . '/../uploads/ufc_f1');
             $imagePath = 'ufc_f1/' . $newImage;
         }
 
         $update = $pdo->prepare('UPDATE sports_events SET sport_type = ?, event_title = ?, event_date = ?, event_time = ?, location = ?, live_link = ?, event_image = ?, status = ? WHERE id = ?');
         $update->execute([$sportType, $eventTitle, $eventDate, $eventTime, $location, $liveLink, $imagePath, $status, $eventId]);
+        // ძველი სურათი იშლება მხოლოდ ბაზის წარმატებით განახლების შემდეგ
+        if ($newImage && $oldImagePath !== $imagePath && str_starts_with($oldImagePath, 'ufc_f1/')) {
+            delete_local_media(substr($oldImagePath, 7), __DIR__ . '/../uploads/ufc_f1');
+        }
         $event = array_merge($event, ['sport_type' => $sportType, 'event_title' => $eventTitle, 'event_date' => $eventDate, 'event_time' => $eventTime, 'location' => $location, 'live_link' => $liveLink, 'event_image' => $imagePath, 'status' => $status]);
         $successMessage = 'ივენთი წარმატებით განახლდა.';
     } catch (Throwable $e) {

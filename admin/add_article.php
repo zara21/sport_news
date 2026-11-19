@@ -12,6 +12,7 @@ $videoMimes = ['video/mp4', 'video/webm'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf_token($_POST['csrf_token'] ?? null);
+    $newUploads = [];
 
     try {
         $title = trim($_POST['title'] ?? '');
@@ -22,6 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $scheduledAt = !empty($_POST['scheduled_at']) ? str_replace('T',' ',(string)$_POST['scheduled_at']).':00' : null;
         if ($scheduledAt && strtotime($scheduledAt) > time()) $status = 'draft';
         $type = $_POST['type'] ?? 'news';
+        if (!in_array($status, ['published', 'draft'], true)) $status = 'draft';
+        if (!in_array($type, ['news', 'opinion', 'analysis', 'live', 'video'], true)) $type = 'news';
         $popular = isset($_POST['popular']) ? 1 : 0;
         $hasVideo = isset($_POST['has_video']) ? 1 : 0;
         $showInStory = isset($_POST['show_in_story']) ? 1 : 0;
@@ -40,11 +43,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $slugInput = trim($_POST['slug'] ?? '');
         $slug = unique_slug($pdo, 'articles', safe_slug($slugInput !== '' ? $slugInput : $title, 'article'));
 
-        $image = upload_media_file('image', __DIR__ . '/../uploads', $imageMimes, 5 * 1024 * 1024);
-        $secondImage = upload_media_file('second_image', __DIR__ . '/../uploads/second_images', $imageMimes, 5 * 1024 * 1024);
-        $storyImage = upload_media_file('story_image', __DIR__ . '/../uploads/story_images', $imageMimes, 5 * 1024 * 1024);
-        $video = $hasVideo ? upload_media_file('video', __DIR__ . '/../uploads/videos', $videoMimes, 80 * 1024 * 1024) : null;
+        $uploadsDir = __DIR__ . '/../uploads';
+        // ახალი ფაილები ჩაიწერება სიაში, რომ შეცდომისას წაიშალოს და uploads-ში ნაგავი არ დარჩეს
+        if ($image = upload_media_file('image', $uploadsDir, $imageMimes, 5 * 1024 * 1024)) $newUploads[] = [$image, $uploadsDir];
+        if ($secondImage = upload_media_file('second_image', $uploadsDir . '/second_images', $imageMimes, 5 * 1024 * 1024)) $newUploads[] = [$secondImage, $uploadsDir . '/second_images'];
+        if ($storyImage = upload_media_file('story_image', $uploadsDir . '/story_images', $imageMimes, 5 * 1024 * 1024)) $newUploads[] = [$storyImage, $uploadsDir . '/story_images'];
+        $video = $hasVideo ? upload_media_file('video', $uploadsDir . '/videos', $videoMimes, 80 * 1024 * 1024) : null;
+        if ($video) $newUploads[] = [$video, $uploadsDir . '/videos'];
 
+        $pdo->beginTransaction();
         $stmt = $pdo->prepare("
             INSERT INTO articles
                 (user_id, title, content, image, second_image, story_image, show_in_story, story_expires_at,
@@ -94,10 +101,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ->execute(['ახალი სტატია', $title, site_path('/news/' . rawurlencode($slug))]);
         }
 
+        $pdo->commit();
+
         $_SESSION['success_message'] = 'სტატია წარმატებით დაემატა.';
-        header("Location: ../news/{$slug}");
+        header('Location: ' . ($status === 'published' ? '../news/' . rawurlencode($slug) : 'preview_article.php?id=' . $articleId));
         exit;
     } catch (Throwable $e) {
+        if ($pdo->inTransaction()) $pdo->rollBack();
+        foreach ($newUploads as [$newFile, $newDir]) {
+            delete_local_media($newFile, $newDir);
+        }
         $_SESSION['error_message'] = $e->getMessage();
         header('Location: add_article.php');
         exit;
@@ -105,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 admin_page_start('სტატიის დამატება', [
-    '/sport_blog/css/add_article.css',
+    '/sport_blog/css/add_article.css?v=20261119c',
     'https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css',
 ]);
 ?>

@@ -15,6 +15,7 @@ $options = [
 
 try {
      $pdo = new PDO($dsn, $user, $pass, $options);
+     $pdo->exec("SET time_zone = '" . (new DateTimeImmutable())->format('P') . "'");
      require_once __DIR__ . '/scheduler.php';
      run_due_scheduler($pdo);
      // echo "კავშირი წარმატებულია!"; // ამის ჩაწერა შეგიძლია დასატესტად

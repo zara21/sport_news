@@ -3,9 +3,14 @@
 function record_article_read(PDO $pdo, int $userId, int $articleId): void
 {
     if ($userId <= 0 || $articleId <= 0) return;
-    $stmt = $pdo->prepare('INSERT INTO article_reads (user_id, article_id, read_count) VALUES (?, ?, 1)
-        ON DUPLICATE KEY UPDATE read_count = read_count + 1, last_read_at = CURRENT_TIMESTAMP');
-    $stmt->execute([$userId, $articleId]);
+    try {
+        $stmt = $pdo->prepare('INSERT INTO article_reads (user_id, article_id, read_count) VALUES (?, ?, 1)
+            ON DUPLICATE KEY UPDATE read_count = read_count + 1, last_read_at = CURRENT_TIMESTAMP');
+        $stmt->execute([$userId, $articleId]);
+    } catch (PDOException $e) {
+        // მაგ. სესიაში დარჩენილი წაშლილი მომხმარებელი — სტატიის გვერდი არ უნდა გაფუჭდეს
+        error_log('record_article_read failed: ' . $e->getMessage());
+    }
 }
 
 function article_is_bookmarked(PDO $pdo, int $userId, int $articleId): bool
