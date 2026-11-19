@@ -1,0 +1,21 @@
+league_name,position,team,played,wins,draws,losses,score,goal_diff,points
+premier_league,1,არსენალი,10,9,0,1,15:5,10,27
+premier_league,2,ბრაიტონი,10,7,1,2,26:7,19,22
+premier_league,3,მანჩესტერ სიტი,10,7,0,3,21:13,8,21
+premier_league,4,ლივერპული,10,5,3,2,14:10,4,18
+premier_league,5,ჩელსი,10,5,1,4,19:16,3,16
+premier_league,6,ევერტონი,10,4,4,2,12:10,2,16
+premier_league,7,ბორნმუთი,10,4,3,3,16:14,2,15
+premier_league,8,ბრენტფორდი,10,3,5,2,16:11,5,14
+premier_league,9,ლიდსი,10,3,5,2,10:8,2,14
+premier_league,10,ასტონ ვილა,10,3,4,3,14:17,-3,13
+premier_league,11,ტოტენჰემი,10,3,3,4,10:11,-1,12
+premier_league,12,ნიუკასლ იუნაიტედი,10,3,3,4,13:16,-3,12
+premier_league,13,ჰალ სიტი,10,2,5,3,11:11,0,11
+premier_league,14,იფსვიჩი,10,3,2,5,15:20,-5,11
+premier_league,15,ფულემი,10,2,4,4,10:12,-2,10
+premier_league,16,ნოტინგემი,10,2,3,5,9:13,-4,9
+premier_league,17,ქოვენთრი,10,3,0,7,10:19,-9,9
+premier_league,18,მანჩესტერ იუნაიტედი,10,1,5,4,14:19,-5,8
+premier_league,19,სანდერლენდი,10,2,2,6,8:17,-9,8
+premier_league,20,კრისტალ პალასი,10,2,1,7,10:24,-14,7

@@ -1,0 +1,347 @@
+.sport-articles-page {
+    padding: 28px 0 10px;
+}
+
+.sport-articles-container {
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
+    color: #1d2737;
+    font-family: "Noto Sans Georgian", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+.sport-articles-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid rgba(18, 28, 45, 0.1);
+    padding-bottom: 14px;
+}
+
+.sport-articles-kicker {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    margin-bottom: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(230, 57, 70, 0.1);
+    color: #c92f3b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.sport-articles-heading h1 {
+    margin: 0;
+    font-size: 44px;
+    line-height: 1.1;
+    color: #121c2d;
+}
+
+.sport-articles-list {
+    display: grid;
+    gap: 18px;
+}
+
+.sport-articles-article-card {
+    min-width: 0;
+    background-color: #fff;
+    border: 1px solid rgba(18, 28, 45, 0.08);
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 18px;
+    padding: 14px;
+    margin-bottom: 0;
+    box-shadow: 0 8px 20px rgba(18, 28, 45, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sport-articles-article-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(18, 28, 45, 0.12);
+}
+
+.sport-articles-image-link {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.sport-articles-article-image,
+.sport-articles-featured-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sport-articles-article-image {
+    aspect-ratio: 16 / 10;
+}
+
+.sport-articles-article-content,
+.sport-articles-featured-content {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.sport-articles-article-content h3,
+.sport-articles-featured-content h2 {
+    margin: 0 0 8px;
+    color: #121c2d;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.sport-articles-article-content h3 {
+    font-size: 18px;
+}
+
+.sport-articles-featured-content h2 {
+    font-size: 34px;
+}
+
+.sport-articles-article-content a,
+.sport-articles-featured-content a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.sport-articles-article-content a:hover,
+.sport-articles-featured-content a:hover {
+    color: #E63946;
+}
+
+.sport-articles-summary {
+    font-size: 14px;
+    color: #5f6b7a;
+    margin: 0 0 12px;
+    line-height: 1.6;
+}
+
+.sport-articles-article-footer {
+    font-size: 13px;
+    color: #7b8794;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.sport-articles-read-more-btn {
+    align-self: flex-start;
+    font-size: 13px;
+    padding: 8px 14px;
+    background-color: #121c2d;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff;
+    border-radius: 7px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.sport-articles-read-more-btn:visited {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff;
+}
+
+.sport-articles-read-more-btn:hover,
+.sport-articles-read-more-btn:focus-visible {
+    background-color: #E63946;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff;
+}
+
+.sport-articles-featured-article {
+    grid-template-columns: minmax(300px, 48%) minmax(0, 1fr);
+    min-height: 320px;
+    margin-bottom: 22px;
+    border-left: 6px solid #E63946;
+}
+
+.sport-articles-featured-image {
+    aspect-ratio: 16 / 9;
+}
+
+.sport-articles-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
+}
+
+.sport-articles-pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    padding: 9px 18px;
+    background-color: #fff;
+    color: #121c2d;
+    border: 1px solid rgba(18, 28, 45, 0.12);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.sport-articles-pagination-btn:hover,
+.sport-articles-pagination-btn--active {
+    color: #fff;
+    background-color: #121c2d;
+}
+
+@media (max-width: 768px) {
+    .sport-articles-heading h1 {
+        font-size: 30px;
+    }
+
+    .sport-articles-page {
+        padding-top: 18px;
+    }
+
+    .sport-articles-container {
+        width: min(100% - 24px, 1180px);
+    }
+
+    .sport-articles-heading {
+        display: block;
+    }
+
+    .sport-articles-article-card,
+    .sport-articles-featured-article {
+        grid-template-columns: 1fr;
+    }
+
+    .sport-articles-featured-article {
+        min-height: 0;
+    }
+
+    .sport-articles-article-content h3,
+    .sport-articles-featured-content h2 {
+        font-size: 18px;
+    }
+
+    .sport-articles-article-footer {
+        flex-direction: column;
+        gap: 4px;
+    }
+}
+
+.sport-articles-empty {
+    padding: 28px;
+    background: #fff;
+    border: 1px solid rgba(18, 28, 45, 0.08);
+    border-radius: 10px;
+    color: #5f6b7a;
+}
+
+.quiz-filters {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px auto;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.quiz-filter-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 16px;
+    border: 1px solid #153b65;
+    border-radius: 8px;
+    background: #153b65;
+    color: #fff;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.quiz-filters input,
+.quiz-filters select {
+    width: 100%;
+    min-width: 0;
+    padding: 12px 14px;
+    border: 1px solid rgba(18, 28, 45, 0.14);
+    border-radius: 8px;
+    background: #fff;
+    color: #121c2d;
+    font: inherit;
+}
+
+.quiz-container {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.quiz-card {
+    min-width: 0;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid rgba(18, 28, 45, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(18, 28, 45, 0.08);
+    text-decoration: none;
+    color: #121c2d;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.quiz-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(18, 28, 45, 0.12);
+}
+
+.quiz-card img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+}
+
+.quiz-card-content {
+    padding: 14px;
+}
+
+.quiz-card-content h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.quiz-type {
+    color: #697386;
+    font-size: 13px;
+}
+
+@media (max-width: 1100px) {
+    .quiz-container {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 820px) {
+    .quiz-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .quiz-filters,
+    .quiz-container {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,132 @@
+.site-footer {
+    margin-top: 36px;
+    padding: 44px 20px 20px;
+    background: #121c2d;
+    color: #f1f1f1;
+}
+
+.site-footer__main {
+    max-width: 1200px;
+    margin-inline: auto;
+}
+
+.site-footer__content-wrapper {
+    display: grid;
+    grid-template-columns: 1.4fr repeat(3, minmax(140px, 1fr)) 1.4fr;
+    gap: 28px;
+    align-items: start;
+}
+
+.site-footer__logo {
+    width: 150px;
+    margin-bottom: 15px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.site-footer__description,
+.site-footer__newsletter-text {
+    margin: 0;
+    color: #c8d0dc;
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.site-footer__nav-title,
+.site-footer__social-title,
+.site-footer__newsletter-title {
+    margin: 0 0 12px;
+    color: #fff;
+    font-size: 16px;
+}
+
+.site-footer__nav-list,
+.site-footer__social-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.site-footer__nav-item {
+    margin-bottom: 9px;
+}
+
+.site-footer__nav-link,
+.site-footer__social-link {
+    color: #c8d0dc;
+    text-decoration: none;
+}
+
+.site-footer__nav-link:hover,
+.site-footer__social-link:hover {
+    color: #fff;
+}
+
+.site-footer__social-list {
+    display: flex;
+    gap: 10px;
+}
+
+.site-footer__social-link {
+    display: inline-grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 8px;
+}
+
+.site-footer__newsletter-form {
+    display: flex;
+    margin-top: 14px;
+}
+
+.site-footer__newsletter-input {
+    min-width: 0;
+    flex: 1;
+    padding: 11px;
+    border: 0;
+    border-radius: 8px 0 0 8px;
+}
+
+.site-footer__newsletter-submit-btn {
+    padding: 11px 15px;
+    border: 0;
+    border-radius: 0 8px 8px 0;
+    background: var(--sb-red, #e63946);
+    color: #fff;
+    font-weight: 800;
+}
+
+.site-footer__copyright {
+    margin-top: 34px;
+    padding: 18px 0 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: #9aa7b8;
+    font-size: 13px;
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+    .site-footer__content-wrapper {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .site-footer__content-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .site-footer__newsletter-form {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .site-footer__newsletter-input,
+    .site-footer__newsletter-submit-btn {
+        width: 100%;
+        border-radius: 8px;
+    }
+}

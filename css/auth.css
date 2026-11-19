@@ -1,0 +1,122 @@
+.auth-page {
+    width: min(520px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 34px 0 20px;
+}
+
+.auth-page__title {
+    margin: 0 0 18px;
+    color: #121c2d;
+    font-size: 40px;
+    line-height: 1.1;
+    text-align: center;
+}
+
+.login-form-card,
+.registration-form-card {
+    background: #fff;
+    border: 1px solid rgba(18, 28, 45, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 12px 30px rgba(18, 28, 45, 0.1);
+    padding: 22px;
+}
+
+.login-form,
+.registration-form {
+    display: grid;
+    gap: 14px;
+}
+
+.login-form__input-group,
+.registration-form__input-group {
+    display: grid;
+    gap: 6px;
+}
+
+.login-form__label,
+.registration-form__label {
+    color: #253044;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.login-form__input,
+.registration-form__input {
+    width: 100%;
+    min-width: 0;
+    padding: 12px 13px;
+    border: 1px solid rgba(18, 28, 45, 0.16);
+    border-radius: 8px;
+    background: #fff;
+    color: #121c2d;
+    font: inherit;
+}
+
+.login-form__input:focus,
+.registration-form__input:focus {
+    border-color: #E63946;
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.12);
+    outline: none;
+}
+
+.login-form__submit-btn,
+.registration-form__submit-btn {
+    width: 100%;
+    padding: 12px 18px;
+    border: 0;
+    border-radius: 8px;
+    background: #E63946;
+    color: #fff;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 800;
+}
+
+.login-form__submit-btn:hover,
+.registration-form__submit-btn:hover {
+    background: #c92f3b;
+}
+
+.login-form__register-link,
+.registration-form__login-link {
+    margin: 0;
+    color: #697386;
+    text-align: center;
+    font-size: 14px;
+}
+
+.login-form__register-link a,
+.registration-form__login-link a {
+    color: #E63946;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.auth-form__error-message,
+.auth-form__success-message {
+    margin-bottom: 14px;
+    padding: 11px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.auth-form__error-message {
+    background: rgba(230, 57, 70, 0.1);
+    color: #a3202b;
+}
+
+.auth-form__success-message {
+    background: rgba(46, 204, 113, 0.12);
+    color: #176b3a;
+}
+
+@media (max-width: 520px) {
+    .auth-page__title {
+        font-size: 30px;
+    }
+
+    .login-form-card,
+    .registration-form-card {
+        padding: 18px;
+    }
+}

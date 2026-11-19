@@ -1,0 +1,161 @@
+@font-face {
+    font-family: "Noto Sans Georgian";
+    src: url("/sport_blog/assets/fonts/NotoSansGeorgian-Variable.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+}
+
+:root {
+    --sb-font-sans: "Noto Sans Georgian", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --sb-bg: #eef1f4;
+    --sb-surface: #ffffff;
+    --sb-surface-soft: #f7fafc;
+    --sb-border: #dfe5ec;
+    --sb-border-strong: #cbd5df;
+    --sb-text: #17212b;
+    --sb-text-soft: #647386;
+    --sb-heading: #17324d;
+    --sb-green: #56a51f;
+    --sb-green-dark: #438719;
+    --sb-red: #e63946;
+    --sb-red-dark: #c92f3b;
+    --sb-blue: #1d4f86;
+    --sb-radius: 8px;
+    --sb-shadow: 0 8px 20px rgba(16, 24, 40, 0.05);
+    --sb-shadow-strong: 0 14px 34px rgba(16, 24, 40, 0.1);
+    --sb-space-1: 6px;
+    --sb-space-2: 10px;
+    --sb-space-3: 14px;
+    --sb-space-4: 18px;
+    --sb-space-5: 22px;
+    --sb-space-6: 28px;
+}
+
+h1,
+.sb-page-title {
+    color: var(--sb-heading);
+    font-size: 32px;
+    line-height: 1.18;
+}
+
+h2,
+.sb-section-title {
+    color: var(--sb-heading);
+    font-size: 26px;
+    line-height: 1.22;
+}
+
+h3,
+.sb-card-title {
+    color: var(--sb-heading);
+    font-size: 18px;
+    line-height: 1.35;
+}
+
+.sb-meta {
+    color: var(--sb-text-soft);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.45;
+}
+
+html {
+    font-family: var(--sb-font-sans);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+    font-family: var(--sb-font-sans);
+}
+
+.sb-card {
+    background: var(--sb-surface);
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius);
+    box-shadow: var(--sb-shadow);
+}
+
+.article-card,
+.sport-articles-card,
+.article-related-card,
+.article-side-card,
+.video-card,
+.quiz-card,
+.match-card,
+.admin-card,
+.admin-stat-card,
+.admin-action-tile {
+    border-radius: var(--sb-radius);
+}
+
+.article-image-mini,
+.sport-articles-card img,
+.article-related-card img,
+.article-side-card img,
+.video-thumbnail img,
+.quiz-card img,
+.match-card img,
+.sb-img-16x9 {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+.article-image-mini,
+.sport-articles-card img,
+.article-related-card img,
+.article-side-card img,
+.video-thumbnail img,
+.quiz-card img,
+.sb-img-16x9 {
+    height: auto;
+}
+
+.sb-img-4x3 {
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+
+.sb-img-1x1 {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+.sb-img-story {
+    aspect-ratio: 9 / 16;
+    object-fit: cover;
+}
+
+.sb-muted {
+    color: var(--sb-text-soft);
+}
+
+@media (max-width: 760px) {
+    h1,
+    .sb-page-title { font-size: 28px; }
+
+    h2,
+    .sb-section-title { font-size: 22px; }
+
+    h3,
+    .sb-card-title { font-size: 16px; }
+}
+
+.sb-pill {
+    align-items: center;
+    background: #eef5ea;
+    border: 1px solid #d7ebcf;
+    border-radius: 999px;
+    color: #356f11;
+    display: inline-flex;
+    font-size: 12px;
+    font-weight: 900;
+    gap: 6px;
+    padding: 5px 9px;
+}

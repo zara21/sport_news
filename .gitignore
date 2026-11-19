@@ -1,0 +1,29 @@
+# საიდუმლოებები
+config/google_oauth.php
+.env
+
+# გენერირებული / runtime მონაცემები
+storage/*
+!storage/.htaccess
+!storage/cache/
+storage/cache/*
+!storage/cache/.gitkeep
+
+# მომხმარებლების და ადმინის მიერ ატვირთული ფაილები
+uploads/*
+!uploads/defaults/
+
+# Composer
+auth_system/vendor/
+vendor/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.agents/
