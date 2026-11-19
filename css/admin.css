@@ -991,3 +991,240 @@ body.admin-page {
     width: 38px;
     height: 38px;
 }
+
+/* ------------------------------------------------------------------
+   მატჩის ტრანსლაციის მართვა (edit_iframes.php)
+   ------------------------------------------------------------------ */
+.iframe-manager {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr);
+    gap: 20px;
+    align-items: start;
+    margin-bottom: 20px;
+}
+
+.iframe-manager .admin-card {
+    margin-bottom: 0;
+}
+
+.iframe-editor {
+    position: sticky;
+    top: 20px;
+}
+
+.iframe-editor h2 {
+    margin: 0 0 14px;
+}
+
+.iframe-editor__selected {
+    display: grid;
+    gap: 4px;
+    min-height: 64px;
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    border: 1px dashed var(--sb-border-strong);
+    border-radius: var(--sb-radius);
+    background: var(--sb-surface-2);
+}
+
+.iframe-editor__selected strong {
+    color: var(--sb-heading);
+    font-size: 16px;
+}
+
+.iframe-editor__selected span {
+    color: var(--sb-text-soft);
+    font-size: 13px;
+}
+
+.iframe-picker__tools {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.iframe-picker__search {
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 16px;
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius-pill);
+    background: var(--sb-surface-2);
+    color: var(--sb-heading);
+    font: inherit;
+}
+
+.iframe-picker__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.iframe-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 6px 14px;
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius-pill);
+    background: var(--sb-surface-2);
+    color: var(--sb-text);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.iframe-chip b {
+    color: var(--sb-text-faint);
+    font-weight: 800;
+}
+
+.iframe-chip.is-active {
+    border-color: var(--sb-accent);
+    background: var(--sb-accent);
+    color: var(--sb-on-accent);
+}
+
+.iframe-chip.is-active b {
+    color: var(--sb-on-accent);
+}
+
+.iframe-picker__list {
+    display: grid;
+    gap: 16px;
+    max-height: 64vh;
+    padding-right: 4px;
+    overflow-y: auto;
+}
+
+.iframe-group {
+    display: grid;
+    gap: 6px;
+}
+
+.iframe-group[hidden],
+.iframe-match[hidden] {
+    display: none;
+}
+
+.iframe-group__title {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 6px 2px;
+    background: var(--sb-surface);
+    color: var(--sb-text-faint);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.iframe-match {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    width: 100%;
+    min-height: 52px;
+    padding: 10px 14px;
+    border: 1px solid var(--sb-border);
+    border-radius: var(--sb-radius);
+    background: var(--sb-surface-2);
+    color: var(--sb-text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s var(--sb-ease), background 0.15s var(--sb-ease);
+}
+
+.iframe-match:hover {
+    border-color: var(--sb-border-strong);
+    background: var(--sb-surface-3);
+}
+
+.iframe-match.is-selected {
+    border-color: var(--sb-accent);
+    background: var(--sb-accent-soft);
+    box-shadow: inset 3px 0 0 var(--sb-accent);
+}
+
+.iframe-match__state {
+    justify-self: start;
+    padding: 4px 9px;
+    border-radius: var(--sb-radius-pill);
+    background: var(--sb-surface-3);
+    color: var(--sb-text);
+    font-size: 12px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.iframe-match__state--live {
+    background: var(--sb-red-soft);
+    color: var(--sb-red-text);
+}
+
+.iframe-match__state--finished {
+    color: var(--sb-text-faint);
+}
+
+.iframe-match__teams {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    color: var(--sb-heading);
+    font-weight: 800;
+}
+
+.iframe-match__teams span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.iframe-match__teams span:first-child {
+    text-align: right;
+}
+
+.iframe-match__teams b,
+.iframe-match__teams i {
+    color: var(--sb-text-soft);
+    font-style: normal;
+    font-weight: 900;
+}
+
+.iframe-match__stream {
+    padding: 4px 9px;
+    border: 1px solid var(--sb-accent-border);
+    border-radius: var(--sb-radius-pill);
+    background: var(--sb-accent-soft);
+    color: var(--sb-accent-text);
+    font-size: 11px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+    .iframe-manager {
+        grid-template-columns: 1fr;
+    }
+
+    .iframe-editor {
+        position: static;
+    }
+}
+
+@media (max-width: 620px) {
+    .iframe-match {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .iframe-match__teams span:first-child {
+        text-align: left;
+    }
+}
