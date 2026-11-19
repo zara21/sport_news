@@ -66,13 +66,14 @@ if (!$reset) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php require __DIR__ . '/../includes/head_meta.php'; ?>
     <meta name="robots" content="noindex">
     <meta name="referrer" content="no-referrer">
     <title>ახალი პაროლი | Sport Blog</title>
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119f">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119f">
-    <link rel="stylesheet" href="/sport_blog/css/auth.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119g">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119g">
+    <link rel="stylesheet" href="/sport_blog/css/auth.css?v=20261119g">
 </head>
 <body class="sport-body">
 <?php require_once __DIR__ . '/../includes/header.php'; ?>

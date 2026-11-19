@@ -20,3 +20,7 @@ RewriteRule ^(.*)$ $1.php [NC,L]
     php_value session.cookie_samesite Lax
     php_value session.use_strict_mode 1
 </IfModule>
+
+<IfModule mod_mime.c>
+    AddType application/manifest+json .webmanifest
+</IfModule>

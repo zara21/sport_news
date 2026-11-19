@@ -13,12 +13,13 @@ function static_page_start(string $title, string $kicker, string $description, s
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php require __DIR__ . '/head_meta.php'; ?>
     <title><?= $safeTitle ?> | Sport Blog</title>
     <meta name="description" content="<?= htmlspecialchars($description, ENT_QUOTES, 'UTF-8') ?>">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119f">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119f">
-    <link rel="stylesheet" href="/sport_blog/css/pages.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119g">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119g">
+    <link rel="stylesheet" href="/sport_blog/css/pages.css?v=20261119g">
 </head>
 <body class="sport-body">
 <?php require __DIR__ . '/header.php'; ?>

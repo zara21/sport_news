@@ -59,6 +59,7 @@ $description = $event
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php require __DIR__ . '/../includes/head_meta.php'; ?>
     <title><?= event_h($pageTitle) ?> - Sport Blog</title>
     <meta name="description" content="<?= event_h($description) ?>">
     <link rel="canonical" href="<?= event_h($canonicalUrl) ?>">
@@ -68,9 +69,9 @@ $description = $event
     <meta property="og:image" content="<?= event_h(absolute_site_url($bannerUrl)) ?>">
     <meta property="og:url" content="<?= event_h($canonicalUrl) ?>">
     <link rel="stylesheet" href="/sport_blog/assets/vendor/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119f">
-    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119f">
-    <link rel="stylesheet" href="/sport_blog/css/event.css?v=20261119f">
+    <link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119g">
+    <link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119g">
+    <link rel="stylesheet" href="/sport_blog/css/event.css?v=20261119g">
 </head>
 <body>
 <?php require __DIR__ . '/../includes/header.php'; ?>

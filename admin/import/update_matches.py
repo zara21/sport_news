@@ -8,12 +8,12 @@ import re
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-# მონაცემთა ბაზის კონფიგურაცია
+# ბაზის პარამეტრები გარემოს ცვლადებიდან (იგივე სახელები, რაც PHP-ის config-ში: SPORT_BLOG_DATABASE_*)
 db_config = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': '',
-    'database': 'auth_system'
+    "host": os.environ.get("SPORT_BLOG_DATABASE_HOST", "localhost"),
+    "user": os.environ.get("SPORT_BLOG_DATABASE_USER", "root"),
+    "password": os.environ.get("SPORT_BLOG_DATABASE_PASSWORD", ""),
+    "database": os.environ.get("SPORT_BLOG_DATABASE_NAME", "auth_system"),
 }
 
 CSV_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'flashscore_matches_with_logos_and_links.csv')

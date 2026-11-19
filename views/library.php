@@ -19,7 +19,8 @@ if ($tab === 'bookmarks') {
     $stmt->execute([$userId,$userId]); $items = $stmt->fetchAll();
 }
 ?>
-<!doctype html><html lang="ka"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ჩემი ბიბლიოთეკა | Sport Blog</title><link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119f"><link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119f"><link rel="stylesheet" href="/sport_blog/css/profile.css?v=20261119f"></head><body><?php require __DIR__.'/../includes/header.php'; ?>
+<!doctype html><html lang="ka"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<?php require __DIR__ . '/../includes/head_meta.php'; ?><title>ჩემი ბიბლიოთეკა | Sport Blog</title><link rel="stylesheet" href="/sport_blog/css/styles.css?v=20261119g"><link rel="stylesheet" href="/sport_blog/css/navbar.css?v=20261119g"><link rel="stylesheet" href="/sport_blog/css/profile.css?v=20261119g"></head><body><?php require __DIR__.'/../includes/header.php'; ?>
 <main class="profile-shell"><section class="user-library"><header class="profile-settings__heading"><div><p class="user-profile__eyebrow">პირადი სივრცე</p><h1>ჩემი ბიბლიოთეკა</h1></div><a class="user-profile__button user-profile__button--neutral" href="/sport_blog/views/profile">პროფილი</a></header>
 <nav class="library-tabs"><a class="<?= $tab==='bookmarks'?'is-active':'' ?>" href="?tab=bookmarks">რჩეულები</a><a class="<?= $tab==='reading'?'is-active':'' ?>" href="?tab=reading">წაკითხული</a><a class="<?= $tab==='quizzes'?'is-active':'' ?>" href="?tab=quizzes">ქვიზები</a></nav>
 <?php if(!$items): ?><div class="sport-articles-empty">ჩანაწერები ჯერ არ არის.</div><?php else: ?><div class="library-list"><?php foreach($items as $item): ?>
